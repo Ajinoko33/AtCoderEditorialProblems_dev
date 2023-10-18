@@ -14,13 +14,13 @@ SLEEP_TIME = 1
 CONTEST_PATTERN = r"^(abc|arc|agc)\d{3}$"
 
 def lambda_handler(event, context):
-    if "username" not in event:
+    if "user" not in event:
         return {}
 
     # 提出を全件取得
     headers = {'content-type': 'application/json'}
     params = {
-        "user" : event["username"],
+        "user" : event["user"],
         "from_second" : 0
     }
     lastSecond = 0
