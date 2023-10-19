@@ -53,7 +53,7 @@ def select_problems_by_writer(writer, con):
     # dict型のリストに変換して返す
     return list(map(dict, cur.fetchall()))
 
-def make_problem_detail(data):
+def make_response(data):
     # オブジェクト変換
     def convert(row):
         obj = {}
@@ -81,6 +81,6 @@ def lambda_handler(event, context):
     res = select_problems_by_writer(event["writer"], con)
 
     # 返り値生成
-    ret = make_problem_detail(res)
+    ret = make_response(res)
 
     return ret
