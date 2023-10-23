@@ -1,10 +1,3 @@
-DROP TABLE IF EXISTS writers;
-CREATE TABLE writers (
-  id INTEGER NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id)
-);
-
 DROP TABLE IF EXISTS contests;
 CREATE TABLE contests (
   id VARCHAR(255) NOT NULL,
@@ -20,7 +13,7 @@ CREATE TABLE problems (
   title VARCHAR(255) NOT NULL,
   difficulty INTEGER,
   contest_id VARCHAR(255) NOT NULL,
-  writer_id INTEGER NOT NULL,
+  writer VARCHAR(255) NOT NULL,
   PRIMARY KEY (id)
 );
 
