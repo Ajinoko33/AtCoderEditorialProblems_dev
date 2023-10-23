@@ -1,3 +1,4 @@
+import textwrap
 import os
 
 import psycopg2
@@ -23,32 +24,28 @@ def connect_db():
     
 def select_problems_by_writer(writer, con):
     # 検索処理
-    sql = \
-        "SELECT" \
-        "    p.id, " \
-        "    p.title, " \
-        "    p.difficulty, " \
-        "    c.start_epoch_second, " \
-        "    pi.sort_order " \
-        "FROM" \
-        "    problems p " \
-        "INNER JOIN" \
-        "    contests c " \
-        "ON" \
-        "    p.contest_id = c.id " \
-        "INNER JOIN" \
-        "    problem_index pi " \
-        "ON" \
-        "    p.index_id = pi.id " \
-        "INNER JOIN" \
-        "    writers w " \
-        "ON" \
-        "    p.writer_id = w.id " \
-        "WHERE" \
-        "    w.name = %s;"
+    sql = """\
+        SELECT
+            p.id,
+            p.title,
+            p.difficulty,
+            c.start_epoch_second,
+            pi.sort_order
+        FROM
+            problems p
+        INNER JOIN
+            contests c
+        ON
+            p.contest_id = c.id
+        INNER JOIN
+            problem_index pi
+        ON
+            p.index_id = pi.id
+        WHERE
+            p.writer = %s;"""
     data = (writer,)
     cur = con.cursor(cursor_factory=DictCursor)
-    cur.execute(sql, data)
+    cur.execute(textwrap.dedent(sql), data)
 
     # dict型のリストに変換して返す
     return list(map(dict, cur.fetchall()))
