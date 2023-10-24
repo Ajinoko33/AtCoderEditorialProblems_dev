@@ -53,13 +53,14 @@ def get_dsn():
     PASSWORD = os.environ["PASSWORD"]
     return f"host={HOST} port={PORT} dbname={DBNAME} user={USER} password={PASSWORD}"
 
-def insert_into_contests(contests, cur):
+def upsert_into_contests(contests, cur):
     if len(contests.keys()) == 0:
         return
 
     # SQL作成
     sql = "INSERT INTO contests (id, start_epoch_second) VALUES"
     sql += ",".join(["(%s, %s)"] * len(contests))
+    sql += "ON CONFLICT (id) DO NOTHING;"
     
     # テーブルへ登録
     data = []
@@ -70,13 +71,14 @@ def insert_into_contests(contests, cur):
 
     return
 
-def insert_into_problems(problems, cur):
+def upsert_into_problems(problems, cur):
     if len(problems) == 0:
         return
     
     # SQL作成
     sql = "INSERT INTO problems (id, index_id, name, title, difficulty, contest_id, writer) VALUES"
     sql += ",".join(["(%s, (SELECT id FROM problem_index pi WHERE pi.problem_index = %s), %s, %s, %s, %s, %s)"] * len(problems))
+    sql += "ON CONFLICT (id) DO NOTHING;"
 
     # テーブルへ登録
     data = []
@@ -103,10 +105,10 @@ def insert_problems(problems, dsn):
     with psycopg2.connect(dsn) as con:
         with con.cursor() as cur:
             # コンテストテーブルへ登録
-            insert_into_contests(contests, cur)
+            upsert_into_contests(contests, cur)
 
             # 問題テーブルへ登録
-            insert_into_problems(problems, cur)
+            upsert_into_problems(problems, cur)
 
     return
 
