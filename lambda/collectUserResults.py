@@ -50,7 +50,7 @@ def collect_all_submittions(user):
         if res.status_code != 200:
             # API呼び出しエラー
             status_code = res.status_code
-            print(f"API呼び出しエラー. ステータスコード:{status_code}")
+            print(f"[ERROR] API呼び出しエラー. ステータスコード:{status_code}")
             return []
         
         submissons = json.loads(res.text)
