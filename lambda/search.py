@@ -1,16 +1,26 @@
 import copy
 import json
 
+from aws_lambda_powertools.utilities.validation import validator
 import boto3
 
+INBOUND_SCHEMA = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": ["writer"],
+    "properties": {
+        "writer": {
+            "type": "string",
+            "maxLength": 255
+        },
+        "user": {
+            "type": "string",
+            "maxLength": 255
+        }
+    }
+}
+
 CLIENT = boto3.client("lambda")
-
-def is_validate(event):
-    # バリデーション
-    if "writer" not in event:
-        return False
-
-    return True
 
 def search_problems(writer):
     # Writer名から問題を検索
@@ -64,11 +74,8 @@ def unite_results(problems, user_results):
 
     return ret
 
-def lambda_handler(event, context):
-    # バリデーション
-    if not is_validate(event):
-        return []
-    
+@validator(inbound_schema=INBOUND_SCHEMA)
+def lambda_handler(event, context):    
     # Writer名から問題を検索
     problems = search_problems(event["writer"])
 

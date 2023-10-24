@@ -1,15 +1,21 @@
 import textwrap
 import os
 
+from aws_lambda_powertools.utilities.validation import validator
 import psycopg2
 from psycopg2.extras import DictCursor
 
-def is_validate(event):
-    # バリデーション
-    if "writer" not in event:
-        return False
-    
-    return True
+INBOUND_SCHEMA = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "requierd": ["writer"],
+    "properties": {
+        "writer": {
+            "type": "string",
+            "maxLength": 255
+        }
+    }
+}
 
 def connect_db():
     # DBに接続
@@ -66,11 +72,8 @@ def make_response(data):
     ret = list(map(convert, data))
     return ret
 
+@validator(inbound_schema=INBOUND_SCHEMA)
 def lambda_handler(event, context):
-    # バリデーション
-    if not is_validate(event):
-        return []
-    
     # DBに接続
     con = connect_db()
 

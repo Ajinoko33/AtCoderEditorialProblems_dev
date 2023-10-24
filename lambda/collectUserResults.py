@@ -2,6 +2,7 @@ import json
 import time
 import re
 
+from aws_lambda_powertools.utilities.validation import validator
 import requests
 
 # ユーザの提出を取得するAPIエンドポイント
@@ -13,12 +14,17 @@ SLEEP_TIME = 1
 # コンテストの正規表現パターン
 CONTEST_PATTERN = r"^(abc|arc|agc)\d{3}$"
 
-def is_validate(event):
-    # バリデーション
-    if "user" not in event:
-        return False
-    
-    return True
+INBOUND_SCHEMA = {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": ["user"],
+    "properties": {
+        "user": {
+            "type": "string",
+            "maxLength": 255
+        }
+    }
+}
 
 def collect_all_submittions(user):
     # 提出を全件取得
@@ -87,11 +93,8 @@ def make_response(status):
 
     return res
 
+@validator(inbound_schema=INBOUND_SCHEMA)
 def lambda_handler(event, context):
-    # バリデーション
-    if not is_validate(event):
-        return []
-
     # 提出を全件取得
     submittions = collect_all_submittions(event["user"])
 
