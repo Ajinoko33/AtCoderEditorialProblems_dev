@@ -14,7 +14,8 @@ INBOUND_SCHEMA = {
             "type": "string",
             "maxLength": 255
         }
-    }
+    },
+    "additionalProperties": False
 }
 
 def connect_db():

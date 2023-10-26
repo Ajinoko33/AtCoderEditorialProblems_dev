@@ -40,7 +40,8 @@ INBOUND_SCHEMA = {
                 "type": "string",
                 "maxLength": 255
             }
-        }
+        },
+        "additionalProperties": False
     }
 }
 

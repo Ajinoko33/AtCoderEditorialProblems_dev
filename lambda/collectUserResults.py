@@ -23,7 +23,8 @@ INBOUND_SCHEMA = {
             "type": "string",
             "maxLength": 255
         }
-    }
+    },
+    "additionalProperties": False
 }
 
 def collect_all_submittions(user):

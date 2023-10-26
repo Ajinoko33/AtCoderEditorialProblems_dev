@@ -17,7 +17,8 @@ INBOUND_SCHEMA = {
             "type": "string",
             "maxLength": 255
         }
-    }
+    },
+    "additionalProperties": False
 }
 
 CLIENT = boto3.client("lambda")
