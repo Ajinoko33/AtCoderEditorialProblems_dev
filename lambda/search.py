@@ -27,7 +27,7 @@ def search_problems(writer):
     # Writer名から問題を検索
     res = CLIENT.invoke(
         FunctionName="searchProblems",
-        LogType="None",
+        LogType="Tail",
         Payload=json.dumps({
             "writer":writer
         })
@@ -43,7 +43,7 @@ def collect_user_results(user):
     # ユーザのAC状況を取得
     res = CLIENT.invoke(
         FunctionName="collectUserResults",
-        LogType="None",
+        LogType="Tail",
         Payload=json.dumps({
             "user":user
         })
