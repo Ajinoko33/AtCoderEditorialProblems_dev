@@ -8,9 +8,9 @@ INBOUND_SCHEMA = {
     "type": "array",
     "items": {
         "type": "object",
-        "required": ["problem_id", "contest_id", "start_epoch_second", "problem_index", "name", "title", "writer"],
+        "required": ["id", "contest_id", "start_epoch_second", "problem_index", "name", "title", "writer"],
         "properties": {
-            "problem_id": {
+            "id": {
                 "type": "string",
                 "maxLength": 255
             },
@@ -84,11 +84,11 @@ def upsert_into_problems(problems, cur):
     # テーブルへ登録
     data = []
     for problem in problems:
-        data.append(problem["problem_id"])
+        data.append(problem["id"])
         data.append(problem["problem_index"])
         data.append(problem["name"])
         data.append(problem["title"])
-        data.append(problem["difficulty"])
+        data.append(problem["difficulty"] if "difficulty" in problem else None)
         data.append(problem["contest_id"])
         data.append(problem["writer"])
     cur.execute(sql, data)
