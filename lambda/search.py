@@ -34,7 +34,8 @@ def search_problems(writer):
     )
 
     if res["StatusCode"] != 200:
-        return []
+        print("Status code:", res["StatusCode"])
+        raise RuntimeError("Lambda invocation error!")
 
     return json.loads(res["Payload"].read())
 
@@ -50,7 +51,8 @@ def collect_user_results(user):
     )
 
     if res["StatusCode"] != 200:
-        return []
+        print("Status code:", res["StatusCode"])
+        raise RuntimeError("Lambda invocation error!")
     
     return json.loads(res["Payload"].read())
 
@@ -76,15 +78,32 @@ def unite_results(problems, user_results):
     return ret
 
 @validator(inbound_schema=INBOUND_SCHEMA)
-def lambda_handler(event, context):    
-    # Writer名から問題を検索
-    problems = search_problems(event["writer"])
+def lambda_handler(event, context):
+    try:
+        # Writer名から問題を検索
+        problems = search_problems(event["writer"])
+    except Exception as e:
+        print(e)
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"message": "Internal Server Error"})
+        }
 
     if "user" in event:
-        # ユーザの提出AC状況を取得
-        user_results = collect_user_results(event["user"])
+        try:
+            # ユーザの提出AC状況を取得
+            user_results = collect_user_results(event["user"])
+        except Exception as e:
+            print(e)
+            return {
+                "statusCode": 500,
+                "body": json.dumps({"message": "Internal Server Error"})
+            }
 
         # 問題と統合
         problems = unite_results(problems, user_results)
 
-    return problems
+    return {
+        "statusCode": 200,
+        "body": json.dumps(problems)
+    }

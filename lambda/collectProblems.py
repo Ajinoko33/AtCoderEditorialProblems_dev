@@ -52,9 +52,8 @@ def set_props(event):
 def correlation_validation(event):
     # 時刻大小関係
     if event["from_epoch_second"] > event["to_epoch_second"]:
-        print("Invalid inbound:")
-        print(event)
-        raise RuntimeError("Correlation Validation Error!")
+        print("Invalid inbound:", event)
+        raise RuntimeError("Correlation validation error!")
 
 def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
     # APIからコンテスト開始時刻を取得
@@ -155,7 +154,8 @@ def invoke_save_lambda(problems):
     )
 
     if res["StatusCode"] != 202:
-        print("Lambda Invocation error! Status code :", res["StatusCode"])
+        print("Status code:", res["StatusCode"])
+        raise RuntimeError("Lambda invocation error!")
 
     return
 
