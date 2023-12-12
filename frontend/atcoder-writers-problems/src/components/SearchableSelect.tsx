@@ -26,7 +26,7 @@ export const SearchableSelect: FC<SearchableSelectProps> = ({ writers }) => {
           <>
             <InputGroup>
               <AutoCompleteInput ref={ref} />
-              <InputRightElement>
+              <InputRightElement style={{ cursor: 'text' }}>
                 {isOpen ? <SearchIcon /> : <ChevronDownIcon />}
               </InputRightElement>
             </InputGroup>
