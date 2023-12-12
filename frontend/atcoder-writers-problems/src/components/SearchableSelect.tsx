@@ -1,10 +1,5 @@
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  IconButton,
-  InputGroup,
-  InputRightElement,
-} from '@chakra-ui/react';
+import { Box, InputGroup, InputRightElement } from '@chakra-ui/react';
 import {
   AutoComplete,
   AutoCompleteInput,
@@ -12,8 +7,6 @@ import {
   AutoCompleteList,
 } from '@choc-ui/chakra-autocomplete';
 import { FC, useRef } from 'react';
-
-const writers = ['aaaa', 'AAAAA', 'BBAAAAAA', 'BBBB', 'cccc'];
 
 export type SearchableSelectProps = {
   writers: string[];
@@ -28,7 +21,7 @@ export const SearchableSelect: FC<SearchableSelectProps> = ({ writers }) => {
 
   return (
     <Box onClick={onClick}>
-      <AutoComplete openOnFocus>
+      <AutoComplete suggestWhenEmpty={true} openOnFocus>
         {({ isOpen }: { isOpen: boolean }) => (
           <>
             <InputGroup>
