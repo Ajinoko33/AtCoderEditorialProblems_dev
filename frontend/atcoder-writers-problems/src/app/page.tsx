@@ -1,23 +1,41 @@
 'use client';
 
-import { HeaderMenuItem } from '@/components/HeaderMenuItem';
-import { SearchIcon } from '@chakra-ui/icons';
 import {
-  Button,
   Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  VStack,
 } from '@chakra-ui/react';
-import { Form, FormProps } from './_components/Form';
+import { Form } from './_components/Form';
+import { useState } from 'react';
+import { problemsData, writersData } from '@/data/Data';
 
 export default function Home() {
-  const writers = ['aaaa', 'AAAAA', 'BBAAAAAA', 'BBBB', 'cccc'];
+  const [writers, setWriters] = useState(writersData);
+  const [problems, setProblems] = useState(problemsData);
+
+  //TODO: problemsをABC,ARCに分ける
 
   return (
-    <Flex alignItems='center' justifyContent='center'>
+    <VStack spacing='3rem'>
       <Form writers={writers} />
-    </Flex>
+      <Tabs>
+        <TabList>
+          <Tab>ABC</Tab>
+          <Tab>ARC</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <p>This is ABC.</p>
+          </TabPanel>
+          <TabPanel>
+            <p>This is ARC.</p>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </VStack>
   );
 }

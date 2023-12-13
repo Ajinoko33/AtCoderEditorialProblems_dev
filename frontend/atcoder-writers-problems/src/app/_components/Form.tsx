@@ -1,22 +1,32 @@
 import { SearchableSelect } from '@/components/SearchableSelect';
-import { Box, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { Writer } from '@/types/Writer';
+import { SearchIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  VStack,
+} from '@chakra-ui/react';
 import { FC } from 'react';
 
 export type FormProps = {
-  writers: string[];
+  writers: Writer[];
 };
 
 export const Form: FC<FormProps> = ({ writers }) => {
   return (
-    <Box>
+    <VStack>
       <FormControl isRequired>
         <FormLabel mb='0'>Writer</FormLabel>
         <SearchableSelect writers={writers} />
       </FormControl>
-      <FormControl mt='0.8rem'>
+      <FormControl mb='0.8rem'>
         <FormLabel mb='0'>User ID</FormLabel>
         <Input type='text' />
       </FormControl>
-    </Box>
+      <Button rightIcon={<SearchIcon />}>検索</Button>
+    </VStack>
   );
 };

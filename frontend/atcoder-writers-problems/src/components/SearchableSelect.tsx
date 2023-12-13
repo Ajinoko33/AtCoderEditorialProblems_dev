@@ -1,3 +1,4 @@
+import { Writer } from '@/types/Writer';
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import { Box, InputGroup, InputRightElement } from '@chakra-ui/react';
 import {
@@ -9,7 +10,7 @@ import {
 import { FC, useRef } from 'react';
 
 export type SearchableSelectProps = {
-  writers: string[];
+  writers: Writer[];
 };
 
 export const SearchableSelect: FC<SearchableSelectProps> = ({ writers }) => {
@@ -31,10 +32,10 @@ export const SearchableSelect: FC<SearchableSelectProps> = ({ writers }) => {
               </InputRightElement>
             </InputGroup>
             <AutoCompleteList>
-              {writers.map((name, idx) => {
+              {writers.map((writer, idx) => {
                 return (
-                  <AutoCompleteItem key={idx} value={name}>
-                    {name}
+                  <AutoCompleteItem key={idx} value={writer.id}>
+                    {writer.id}
                   </AutoCompleteItem>
                 );
               })}
