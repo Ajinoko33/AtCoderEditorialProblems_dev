@@ -1,6 +1,4 @@
-import { Flex } from '@chakra-ui/react';
 import { FC } from 'react';
-import { HeaderTitle } from './HeaderTitle';
 
 export type HeaderAreaProps = {
   title: string;
@@ -9,16 +7,9 @@ export type HeaderAreaProps = {
 
 export const HeaderArea: FC<HeaderAreaProps> = ({ title, children }) => {
   return (
-    <Flex
-      as='nav'
-      px='1rem'
-      alignItems='center'
-      bg='brand.100'
-      position='sticky'
-      top='0'
-    >
-      <HeaderTitle title={title}></HeaderTitle>
+    <nav className='container'>
+      {/* <HeaderTitle title={title}></HeaderTitle> */}
       {children}
-    </Flex>
+    </nav>
   );
 };

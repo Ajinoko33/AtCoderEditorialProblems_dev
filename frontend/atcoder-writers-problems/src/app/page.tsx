@@ -1,17 +1,7 @@
 'use client';
 
-import {
-  Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  VStack,
-} from '@chakra-ui/react';
-import { Form } from './_components/Form';
-import { useState } from 'react';
 import { problemsData, writersData } from '@/data/Data';
+import { useState } from 'react';
 
 export default function Home() {
   const [writers, setWriters] = useState(writersData);
@@ -19,23 +9,11 @@ export default function Home() {
 
   //TODO: problemsをABC,ARCに分ける
 
+  //TODO: Form, Tabs を縦に並べる
   return (
-    <VStack spacing='3rem'>
-      <Form writers={writers} />
-      <Tabs>
-        <TabList>
-          <Tab>ABC</Tab>
-          <Tab>ARC</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <p>This is ABC.</p>
-          </TabPanel>
-          <TabPanel>
-            <p>This is ARC.</p>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </VStack>
+    <div>
+      <a href='https://google.com'>google</a>
+      <a href='https://google.com'>google</a>
+    </div>
   );
 }

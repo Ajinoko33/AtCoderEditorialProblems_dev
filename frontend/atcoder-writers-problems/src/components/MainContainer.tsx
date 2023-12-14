@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { FC } from 'react';
 
 export type MainContainerProps = {
@@ -7,8 +6,8 @@ export type MainContainerProps = {
 
 export const MainContainer: FC<MainContainerProps> = ({ children }) => {
   return (
-    <Box as='main'>
-      <Box
+    <main>
+      {/* <div
         // w='40rem'
         mt='1rem'
         mx='auto'
@@ -16,9 +15,9 @@ export const MainContainer: FC<MainContainerProps> = ({ children }) => {
         borderColor='red'
         border='solid'
         borderWidth='1px'
-      >
-        {children}
-      </Box>
-    </Box>
+      > */}
+      {children}
+      {/* </div> */}
+    </main>
   );
 };
