@@ -6,15 +6,18 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu, Space } from 'antd';
+import Link from 'next/link';
+import { useSelectedLayoutSegment } from 'next/navigation';
+import { useState } from 'react';
 
 const items: MenuProps['items'] = [
   {
-    label: '問題検索',
+    label: <Link href='/'>問題検索</Link>,
     key: 'top',
     icon: <FileSearchOutlined />,
   },
   {
-    label: '使い方',
+    label: <Link href='/howToUse'>使い方</Link>,
     key: 'howToUse',
     icon: <QuestionCircleOutlined />,
   },
@@ -58,10 +61,20 @@ const items: MenuProps['items'] = [
 ];
 
 export const HeaderMenu = () => {
+  const defaultSelectedKey = useSelectedLayoutSegment() ?? 'top';
+
+  const [selectedKey, setSelectedKey] = useState(defaultSelectedKey);
+
+  const onClick: MenuProps['onClick'] = ({ key }) => {
+    setSelectedKey(key);
+  };
+
   return (
     <Menu
       mode='horizontal'
       items={items}
+      selectedKeys={[selectedKey]}
+      onClick={onClick}
       className='float-right bg-transparent border-0'
     />
   );
