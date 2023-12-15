@@ -58,5 +58,11 @@ const items: MenuProps['items'] = [
 ];
 
 export const HeaderMenu = () => {
-  return <Menu mode='horizontal' items={items} />;
+  return (
+    <Menu
+      mode='horizontal'
+      items={items}
+      className='float-right bg-transparent border-0'
+    />
+  );
 };
