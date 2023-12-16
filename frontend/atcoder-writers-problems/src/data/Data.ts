@@ -1,23 +1,19 @@
 import { Problem } from '@/types/Problem';
-import { Writer } from '@/types/Writer';
 
-export const writersData: Writer[] = [
-  {
-    id: 'aaaa',
-  },
-  {
-    id: 'AAAAA',
-  },
-  {
-    id: 'BBAAAAAA',
-  },
-  {
-    id: 'BBBB',
-  },
-  {
-    id: 'cccc',
-  },
+export const writersData: string[] = [
+  'aaaa',
+  'AAAAA',
+  'BBAAAAAA',
+  'BBBB',
+  'cccc',
+  'xxxxxxxxxxxxxxxxxxxx',
+  '12345678901234567890',
 ];
+
+export const writersDataOptions = writersData.map((name) => ({
+  value: name,
+  label: name,
+}));
 
 export const problemsData: Problem[] = Array(20)
   .fill(null)

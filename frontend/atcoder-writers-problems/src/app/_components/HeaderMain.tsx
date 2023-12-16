@@ -1,9 +1,9 @@
+import Link from 'next/link';
+
 export const HeaderMain = () => {
   return (
-    <div>
-      <a href='/' className='font-bold'>
-        AtCoder Writer's Problems
-      </a>
-    </div>
+    <Link href='/' className='font-bold no-underline text-black'>
+      AtCoder Writer's Problems
+    </Link>
   );
 };

@@ -5,19 +5,5 @@ export type MainContainerProps = {
 };
 
 export const MainContainer: FC<MainContainerProps> = ({ children }) => {
-  return (
-    <main>
-      {/* <div
-        // w='40rem'
-        mt='1rem'
-        mx='auto'
-        px='15px'
-        borderColor='red'
-        border='solid'
-        borderWidth='1px'
-      > */}
-      {children}
-      {/* </div> */}
-    </main>
-  );
+  return <main className='container mx-auto mt-6'>{children}</main>;
 };
