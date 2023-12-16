@@ -1,15 +1,24 @@
 import { writersDataOptions } from '@/data/Data';
+import { Problem } from '@/types/Problem';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
+import { FC } from 'react';
 
-export type FieldType = {
+export type SearchFormProps = {
+  setProblems: (problems: Problem[]) => void;
+};
+
+type FieldType = {
   writer: string;
   user?: string;
 };
 
-export const SearchForm = () => {
+// TODO:バリデーション
+// TODO:データ取得
+
+export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
   return (
-    <Form labelCol={{ span: 8 }} style={{ width: 300 }}>
+    <Form labelCol={{ span: 8 }}>
       <Form.Item<FieldType>
         label='Writer'
         name='writer'
@@ -31,7 +40,7 @@ export const SearchForm = () => {
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Button type='primary' htmlType='submit' icon={<SearchOutlined />}>
-          検索
+          Search
         </Button>
       </Form.Item>
     </Form>

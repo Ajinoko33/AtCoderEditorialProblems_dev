@@ -1,22 +1,49 @@
 'use client';
 
-import { problemsData, writersData } from '@/data/Data';
-import { Flex } from 'antd';
-import { useState } from 'react';
+import { problemsData } from '@/data/Data';
+import { Problem } from '@/types/Problem';
+import { Button, Divider, Flex } from 'antd';
+import { useEffect, useState } from 'react';
 import { SearchForm } from './_components/SearchForm';
 import { SearchResult } from './_components/SearchResult';
 
 export default function Home() {
-  const [writers, setWriters] = useState(writersData);
-  const [problems, setProblems] = useState(problemsData);
+  const [problems, setProblems] = useState<Problem[]>(problemsData);
 
-  //TODO: problemsをABC,ARCに分ける
+  useEffect(() => {
+    console.log(problems);
+  }, [problems]);
 
-  //TODO: Form, Tabs を縦に並べる
+  const addProblem = () => {
+    setProblems([
+      ...problems,
+      {
+        contest: 'ABC999',
+        category: 'ABC',
+        title: 'A. xxx',
+        difficulty: 200,
+        startEpochSecond: 1000000,
+        sortOrder: 1,
+        resultCode: 1,
+      },
+      {
+        contest: 'ARC999',
+        category: 'ARC',
+        title: 'A. xxx',
+        difficulty: 200,
+        startEpochSecond: 1000000,
+        sortOrder: 1,
+        resultCode: 1,
+      },
+    ]);
+  };
+
   return (
     <Flex align='center' vertical>
-      <SearchForm />
-      <SearchResult />
+      <SearchForm setProblems={setProblems} />
+      <Divider />
+      <Button onClick={addProblem}>追加</Button>
+      <SearchResult problems={problems} />
     </Flex>
   );
 }

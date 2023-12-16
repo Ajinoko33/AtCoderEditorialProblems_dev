@@ -75,7 +75,7 @@ export const HeaderMenu = () => {
       items={items}
       selectedKeys={[selectedKey]}
       onClick={onClick}
-      className='float-right bg-transparent border-0'
+      className='bg-transparent border-0'
     />
   );
 };

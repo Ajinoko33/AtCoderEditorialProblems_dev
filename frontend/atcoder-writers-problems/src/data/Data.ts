@@ -1,4 +1,4 @@
-import { Problem } from '@/types/Problem';
+import { Problem, categories } from '@/types/Problem';
 
 export const writersData: string[] = [
   'aaaa',
@@ -19,9 +19,9 @@ export const problemsData: Problem[] = Array(20)
   .fill(null)
   .map((_, idx) => {
     const problem: Problem = {
-      contest: idx % 2 ? `ABC${300 - idx / 2}` : `ARC${300 - idx / 2}`,
-      category: idx % 2 ? 'ABC' : 'ARC',
-      title: 'A. pow',
+      contest: `${categories[idx % 2]}${300 - Math.floor(idx / 2)}`,
+      category: categories[idx % 2],
+      title: 'A. pow pow pow pow pow pow',
       difficulty: idx % 4 ? 50 : undefined,
       startEpochSecond: 111222333,
       sortOrder: idx / 2,
