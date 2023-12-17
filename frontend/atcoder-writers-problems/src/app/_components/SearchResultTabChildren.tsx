@@ -18,21 +18,23 @@ const columns: ColumnsType<DataType> = [
     title: 'Contest',
     dataIndex: 'contest',
     key: 'contest',
+    width: 110,
   },
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
+    ellipsis: true,
   },
 ];
 
 export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   problems,
 }) => {
-  // TODO: tableの幅を，内容の長さに依らず固定長に．
   // TODO: diff表示
   // TODO: ユーザーAC状況反映
-  // TODO: ACは非表示
+  // TODO: 非表示レベル(表示レベル)フィルター
+  // TODO: diff表示フィルター
   const data: DataType[] = problems.map((problem, idx) => ({
     key: idx.toString(),
     contest: problem.contest,
@@ -40,11 +42,12 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   }));
 
   return (
-    <Flex align='center' gap='middle' vertical>
+    <Flex vertical>
       <Table
         columns={columns}
         dataSource={data}
         pagination={{ position: ['topCenter', 'bottomCenter'] }}
+        className='max-w-xl'
       />
     </Flex>
   );

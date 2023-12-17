@@ -21,7 +21,7 @@ export const problemsData: Problem[] = Array(20)
     const problem: Problem = {
       contest: `${categories[idx % 2]}${300 - Math.floor(idx / 2)}`,
       category: categories[idx % 2],
-      title: 'A. pow pow pow pow pow pow',
+      title: 'D. Everywhere is Sparser than Whole (Construction)',
       difficulty: idx % 4 ? 50 : undefined,
       startEpochSecond: 111222333,
       sortOrder: idx / 2,
