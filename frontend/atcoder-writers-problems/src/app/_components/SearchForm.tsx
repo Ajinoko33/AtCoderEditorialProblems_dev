@@ -1,11 +1,11 @@
-import { writersDataOptions } from '@/data/Data';
+import { axiosInstance } from '@/config/axios';
 import { Problem } from '@/types/Problem';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 
 export type SearchFormProps = {
-  setProblems: (problems: Problem[]) => void;
+  setProblems: Dispatch<SetStateAction<Problem[]>>;
 };
 
 type FieldType = {
@@ -14,9 +14,30 @@ type FieldType = {
 };
 
 // TODO:バリデーション
-// TODO:データ取得
+// TODO:問題データ取得
 
 export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
+  const [writers, setWriters] = useState<String[]>([]);
+
+  const createOptions = (_wirters: String[]) =>
+    _wirters.map((_writer) => ({
+      value: _writer,
+      label: _writer,
+    }));
+
+  // Writer全件取得
+  useEffect(() => {
+    axiosInstance
+      .get('/writers')
+      .then((res) => {
+        console.log(res.data);
+        setWriters(res.data);
+      })
+      .catch((error) => {
+        console.log('GET error when getting writers!!');
+      });
+  }, []);
+
   return (
     <Form labelCol={{ span: 8 }}>
       <Form.Item<FieldType>
@@ -32,7 +53,7 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
               .toLowerCase()
               .localeCompare((optionB?.label ?? '').toLowerCase())
           }
-          options={writersDataOptions}
+          options={createOptions(writers)}
         />
       </Form.Item>
       <Form.Item<FieldType> label='User ID' name='user'>
