@@ -1,3 +1,4 @@
+import os
 import json
 
 import boto3
@@ -24,7 +25,16 @@ def lambda_handler(event, context):
         print(e)
         return {
             "statusCode": 500,
+            'headers': {
+                'Access-Control-Allow-Origin': os.environ["CORS_ORIGIN"],
+            },
             "body": json.dumps({"message": "Internal Server Error"})
         }
 
-    return res
+    return {
+        "statusCode": 200,
+        'headers': {
+            'Access-Control-Allow-Origin': os.environ["CORS_ORIGIN"],
+        },
+        "body": res
+    }

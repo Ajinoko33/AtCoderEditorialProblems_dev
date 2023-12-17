@@ -1,4 +1,5 @@
 import copy
+import os
 import json
 
 from aws_lambda_powertools.utilities.validation import validator
@@ -86,6 +87,9 @@ def lambda_handler(event, context):
         print(e)
         return {
             "statusCode": 500,
+            'headers': {
+                'Access-Control-Allow-Origin': os.environ["CORS_ORIGIN"],
+            },
             "body": json.dumps({"message": "Internal Server Error"})
         }
 
@@ -97,6 +101,9 @@ def lambda_handler(event, context):
             print(e)
             return {
                 "statusCode": 500,
+                'headers': {
+                    'Access-Control-Allow-Origin': os.environ["CORS_ORIGIN"],
+                },
                 "body": json.dumps({"message": "Internal Server Error"})
             }
 
@@ -105,5 +112,8 @@ def lambda_handler(event, context):
 
     return {
         "statusCode": 200,
+        'headers': {
+            'Access-Control-Allow-Origin': os.environ["CORS_ORIGIN"],
+        },
         "body": json.dumps(problems)
     }
