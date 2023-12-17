@@ -15,7 +15,7 @@ export const writersDataOptions = writersData.map((name) => ({
   label: name,
 }));
 
-export const problemsData: Problem[] = Array(20)
+export const problemsData: Problem[] = Array(50)
   .fill(null)
   .map((_, idx) => {
     const problem: Problem = {
