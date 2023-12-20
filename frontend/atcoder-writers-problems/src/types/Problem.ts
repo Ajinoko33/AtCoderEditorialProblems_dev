@@ -8,5 +8,5 @@ export type Problem = {
   difficulty?: number;
   startEpochSecond: number;
   sortOrder: number;
-  resultCode: number;
+  resultCode?: number; // 1: AC, 2: 1回以上の提出かつ未AC, undefined: 未提出
 };
