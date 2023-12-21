@@ -2,25 +2,7 @@ import copy
 import os
 import json
 
-from aws_lambda_powertools.utilities.validation import validator
 import boto3
-
-INBOUND_SCHEMA = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "required": ["writer"],
-    "properties": {
-        "writer": {
-            "type": "string",
-            "maxLength": 255
-        },
-        "user": {
-            "type": "string",
-            "maxLength": 255
-        }
-    },
-    "additionalProperties": False
-}
 
 CLIENT = boto3.client("lambda")
 
@@ -78,11 +60,12 @@ def unite_results(problems, user_results):
 
     return ret
 
-@validator(inbound_schema=INBOUND_SCHEMA)
 def lambda_handler(event, context):
+    params = event["queryStringParameters"]
+    
     try:
         # Writer名から問題を検索
-        problems = search_problems(event["writer"])
+        problems = search_problems(params["writer"])
     except Exception as e:
         print(e)
         return {
@@ -93,10 +76,10 @@ def lambda_handler(event, context):
             "body": json.dumps({"message": "Internal Server Error"})
         }
 
-    if "user" in event:
+    if "user" in params:
         try:
             # ユーザの提出AC状況を取得
-            user_results = collect_user_results(event["user"])
+            user_results = collect_user_results(params["user"])
         except Exception as e:
             print(e)
             return {
