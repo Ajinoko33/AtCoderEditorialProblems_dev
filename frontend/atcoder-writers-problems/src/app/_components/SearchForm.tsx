@@ -19,6 +19,10 @@ type FieldType = {
 export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
   const [writers, setWriters] = useState<String[]>([]);
 
+  const validateMessages = {
+    required: "'${label}' is required!",
+  };
+
   const createOptions = (_wirters: String[]) =>
     _wirters.map((_writer) => ({
       value: _writer,
@@ -30,7 +34,6 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
     axiosInstance
       .get('/writers')
       .then((res) => {
-        console.log(res.data);
         setWriters(res.data);
       })
       .catch((error) => {
@@ -38,8 +41,29 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
       });
   }, []);
 
+  // submit
+  const onFinish = (values: FieldType) => {
+    axiosInstance
+      .get('/search', {
+        params: {
+          writer: values.writer,
+          user: values.user || undefined,
+        },
+      })
+      .then((res) => {
+        setProblems(res.data);
+      })
+      .catch((error) => {
+        console.log('POST error when getting problems!!');
+      });
+  };
+
   return (
-    <Form labelCol={{ span: 8 }}>
+    <Form
+      validateMessages={validateMessages}
+      onFinish={onFinish}
+      labelCol={{ span: 8 }}
+    >
       <Form.Item<FieldType>
         label='Writer'
         name='writer'
