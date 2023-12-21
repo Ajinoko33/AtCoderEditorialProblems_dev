@@ -13,6 +13,8 @@ import boto3
 API_URL = "https://kenkoooo.com/atcoder/resources"
 # AtCoder解説一覧ページURLテンプレート
 EDITORIAL_URL_TEMPLATE = Template("https://atcoder.jp/contests/${contest_id}/editorial?editorialLang=ja&lang=ja")
+# 抽出対象のコンテスト(コンテストIDの先頭3文字)
+TARGET_CONTEST = ["abc", "arc"]
 
 CLIENT = boto3.client("lambda")
 
@@ -74,6 +76,10 @@ def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
         ret[contest["id"]] = contest["start_epoch_second"]
 
     return ret
+    
+def extract_contests(contest_ids):
+    # 対象コンテストのIDを抽出
+    return list(filter(lambda contest_id: contest_id[:3] in TARGET_CONTEST, contest_ids))
 
 def collect_problems(contest_ids):
     # APIから問題情報を取得
@@ -171,8 +177,10 @@ def lambda_handler(event, context):
     # APIからコンテスト開始時刻取得
     start_epoch_secs = collect_contest_start_epoch_secs(filled_event["from_epoch_second"], filled_event["to_epoch_second"])
 
+    # 対象コンテストのIDを抽出
+    contest_ids = extract_contests(start_epoch_secs.keys())
+    
     # APIから問題情報取得
-    contest_ids = start_epoch_secs.keys()
     problems = collect_problems(contest_ids)
 
     # APIからdifficulty情報取得
@@ -186,6 +194,8 @@ def lambda_handler(event, context):
     united_problems = unite_into_problems(problems, start_epoch_secs, difficulties, writers)
 
     # lambda呼び出し(非同期処理)
+    print("save problems:")
+    print(united_problems)
     invoke_save_lambda(united_problems)
     
 
