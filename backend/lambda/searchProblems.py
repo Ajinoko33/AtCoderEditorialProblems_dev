@@ -34,20 +34,16 @@ def select_problems_by_writer(writer, con):
     sql = """\
         SELECT
             p.id,
-            p.title,
+            p.name,
             p.difficulty,
-            c.start_epoch_second,
-            pi.sort_order
+            p.problem_index,
+            c.start_epoch_second
         FROM
             problems p
         INNER JOIN
             contests c
         ON
             p.contest_id = c.id
-        INNER JOIN
-            problem_index pi
-        ON
-            p.index_id = pi.id
         WHERE
             p.writer = %s;"""
     data = (writer,)
@@ -63,11 +59,11 @@ def make_response(data):
         obj = {}
         obj["contest"] = row["id"][:6].upper()
         obj["category"] = row["id"][:3].upper()
-        obj["title"] = row["title"]
+        obj["name"] = row["name"]
         obj["difficulty"] = row["difficulty"]
         obj["id"] = row["id"]
         obj["start_epoch_second"] = row["start_epoch_second"]
-        obj["sort_order"] = row["sort_order"]
+        obj["problem_index"] = row["problem_index"]
         return obj
 
     ret = list(map(convert, data))

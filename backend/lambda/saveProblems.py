@@ -78,12 +78,8 @@ def upsert_into_problems(problems, cur):
         return
     
     # SQL作成
-    value_tmpl = """\
-        (%s,
-        COALESCE((SELECT id FROM problem_index pi WHERE pi.problem_index = %s),
-            (SELECT id FROM problem_index pi WHERE pi.problem_index = 'OTHER')),
-        %s, %s, %s, %s, %s)"""
-    sql = "INSERT INTO problems (id, index_id, name, title, difficulty, contest_id, writer) VALUES"
+    value_tmpl = "(%s, %s, %s, %s, %s, %s, %s)"
+    sql = "INSERT INTO problems (id, problem_index, name, title, difficulty, contest_id, writer) VALUES"
     sql += ",".join([textwrap.dedent(value_tmpl)] * len(problems))
     sql += "ON CONFLICT (id) DO NOTHING;"
 

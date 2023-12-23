@@ -68,7 +68,7 @@ def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
 
     contests = json.loads(res.text)
 
-    # 開始時刻がfromからtoまでの間にあるコンテストを抽出
+    # 開始時刻が[from,to]にあるコンテストを抽出
     target_contests = list(filter(lambda c: from_epoch_second <= c["start_epoch_second"] <= to_epoch_second, contests))
     # 開始時刻を抽出
     ret = {}
@@ -164,7 +164,6 @@ def invoke_save_lambda(problems):
         raise RuntimeError("Lambda invocation error!")
 
     return
-
 
 @validator(inbound_schema=INBOUND_SCHEMA)
 def lambda_handler(event, context):

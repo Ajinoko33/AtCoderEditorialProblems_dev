@@ -1,4 +1,9 @@
-import type { Problem, ResultCode } from '@/types/Problem';
+import {
+  getProblemIndexOrder,
+  type Problem,
+  type ProblemIndex,
+  type ResultCode,
+} from '@/types/Problem';
 import { Flex, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FC } from 'react';
@@ -14,33 +19,36 @@ interface DataType {
   key: string;
   id: string;
   contest: string;
-  title: string;
+  name: string;
   difficulty?: number;
-  sortOrder: number;
   startEpochSecond: number;
   resultCode: ResultCode;
+  problemIndex: ProblemIndex;
 }
 
 const columns: ColumnsType<DataType> = [
   {
-    title: 'Contest',
+    title: 'ID',
     dataIndex: 'contest',
-    key: 'contest',
+    key: 'ID',
     width: 110,
     sorter: (a, b) =>
-      a.startEpochSecond - b.startEpochSecond || a.sortOrder - b.sortOrder,
+      a.startEpochSecond - b.startEpochSecond ||
+      getProblemIndexOrder(a.problemIndex) -
+        getProblemIndexOrder(b.problemIndex),
     sortDirections: ['ascend', 'descend', 'ascend'],
     defaultSortOrder: 'descend',
     showSorterTooltip: false,
+    render: (text, record) => `${record.contest} - ${record.problemIndex}`,
   },
   {
     title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
+    dataIndex: 'name',
+    key: 'Title',
     ellipsis: true,
     render: (text, record) => (
       <>
-        <span className='mr-1'>
+        <span className='mr-2'>
           <DifficultyCircle difficulty={record.difficulty} />
         </span>
         <a
@@ -56,7 +64,7 @@ const columns: ColumnsType<DataType> = [
   {
     title: 'diff',
     dataIndex: 'difficulty',
-    key: 'difficulty',
+    key: 'diff',
     width: 80,
     sorter: (a, b) => (a.difficulty || -DIFF_INF) - (b.difficulty || -DIFF_INF),
     sortDirections: ['ascend', 'descend', 'ascend'],
@@ -64,6 +72,17 @@ const columns: ColumnsType<DataType> = [
     render: (text) => text || '-',
   },
 ];
+
+const rowClassName = (record: DataType) => {
+  switch (record.resultCode) {
+    case 'AC':
+      return 'bg-[#C3E6CB]';
+    case 'Trying':
+      return 'bg-[#FFEEBA]';
+    case 'Yet':
+      return '';
+  }
+};
 
 export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   problems,
@@ -74,23 +93,12 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
     key: idx.toString(),
     id: problem.id,
     contest: problem.contest,
-    title: problem.title,
+    name: problem.name,
     difficulty: problem.difficulty,
-    sortOrder: problem.sortOrder,
     startEpochSecond: problem.startEpochSecond,
     resultCode: problem.resultCode,
+    problemIndex: problem.problemIndex,
   }));
-
-  const rowClassName = (record: DataType) => {
-    switch (record.resultCode) {
-      case 'AC':
-        return 'bg-[#C3E6CB]';
-      case 'Trying':
-        return 'bg-[#FFEEBA]';
-      case 'Yet':
-        return '';
-    }
-  };
 
   return (
     <Flex vertical>
