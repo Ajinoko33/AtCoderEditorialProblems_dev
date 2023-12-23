@@ -9,13 +9,14 @@ export type ProblemResponse = {
   difficulty?: number;
   start_epoch_second: number;
   sort_order: number;
-  resultCode?: number; // 1: AC, 2: 1回以上の提出かつ未AC, undefined: 未提出
+  result_code?: number; // 1: AC, 2: 1回以上の提出かつ未AC, undefined: 未提出
 };
 
-type OmitProps = 'start_epoch_second' | 'sort_order';
+type OmitProps = 'start_epoch_second' | 'sort_order' | 'result_code';
 export type Problem = Omit<ProblemResponse, OmitProps> & {
   startEpochSecond: number;
   sortOrder: number;
+  resultCode?: number;
 };
 
 export const createProblemFromProblemResponse = (
@@ -26,7 +27,7 @@ export const createProblemFromProblemResponse = (
   category: src.category,
   title: src.title,
   difficulty: src.difficulty,
-  resultCode: src.resultCode,
   startEpochSecond: src.start_epoch_second,
   sortOrder: src.sort_order,
+  resultCode: src.result_code,
 });
