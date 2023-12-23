@@ -1,7 +1,9 @@
+import { clipDifficulty } from '@/components/external/AtCoderProblems';
 import { axiosInstance } from '@/config/axios';
 import { Problem } from '@/types/Problem';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
+import { AxiosResponse } from 'axios';
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 
 export type SearchFormProps = {
@@ -50,8 +52,14 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
           user: values.user || undefined,
         },
       })
-      .then((res) => {
-        setProblems(res.data);
+      .then((res: AxiosResponse<Problem[]>) => {
+        // difficultyを丸める
+        const difficultyClippedProblems = res.data.map((problem) => ({
+          ...problem,
+          difficulty: problem.difficulty && clipDifficulty(problem.difficulty),
+        }));
+
+        setProblems(difficultyClippedProblems);
       })
       .catch((error) => {
         console.log('POST error when getting problems!!');

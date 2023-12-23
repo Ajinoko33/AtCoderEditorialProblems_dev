@@ -2,6 +2,7 @@ import { Problem } from '@/types/Problem';
 import { Flex, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FC } from 'react';
+import { DifficultyCircle } from './DifficultyCircle';
 
 const DIFF_INF = 100000;
 
@@ -37,6 +38,14 @@ const columns: ColumnsType<DataType> = [
     dataIndex: 'title',
     key: 'title',
     ellipsis: true,
+    render: (text, record) => (
+      <>
+        <span className='mr-1'>
+          <DifficultyCircle difficulty={record.difficulty} />
+        </span>
+        {text}
+      </>
+    ),
   },
   {
     title: 'diff',
@@ -53,7 +62,6 @@ const columns: ColumnsType<DataType> = [
 export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   problems,
 }) => {
-  // TODO: diff表示
   // TODO: ユーザーAC状況反映
   // TODO: 非表示レベル(表示レベル)フィルター
   // TODO: diff表示フィルター

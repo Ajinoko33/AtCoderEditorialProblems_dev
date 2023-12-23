@@ -2,7 +2,7 @@
 
 import { problemsData } from '@/data/Data';
 import { Problem } from '@/types/Problem';
-import { Button, Divider, Flex } from 'antd';
+import { Divider, Flex } from 'antd';
 import { useState } from 'react';
 import { SearchForm } from './_components/SearchForm';
 import { SearchResult } from './_components/SearchResult';
@@ -38,7 +38,6 @@ export default function Home() {
     <Flex align='center' vertical>
       <SearchForm setProblems={setProblems} />
       <Divider />
-      <Button onClick={addProblem}>追加</Button>
       <SearchResult problems={problems} />
     </Flex>
   );
