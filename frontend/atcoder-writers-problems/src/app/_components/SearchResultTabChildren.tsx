@@ -17,6 +17,7 @@ interface DataType {
   title: string;
   difficulty?: number;
   sortOrder: number;
+  startEpochSecond: number;
 }
 
 const columns: ColumnsType<DataType> = [
@@ -25,11 +26,8 @@ const columns: ColumnsType<DataType> = [
     dataIndex: 'contest',
     key: 'contest',
     width: 110,
-    sorter: (a, b) => {
-      if (a.contest > b.contest) return 1;
-      else if (a.contest < b.contest) return -1;
-      else return a.sortOrder - b.sortOrder;
-    },
+    sorter: (a, b) =>
+      a.startEpochSecond - b.startEpochSecond || a.sortOrder - b.sortOrder,
     sortDirections: ['ascend', 'descend', 'ascend'],
     defaultSortOrder: 'descend',
     showSorterTooltip: false,
@@ -79,6 +77,7 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
     title: problem.title,
     difficulty: problem.difficulty,
     sortOrder: problem.sortOrder,
+    startEpochSecond: problem.startEpochSecond,
   }));
 
   return (

@@ -1,6 +1,10 @@
 import { clipDifficulty } from '@/components/external/AtCoderProblems';
 import { axiosInstance } from '@/config/axios';
-import { Problem } from '@/types/Problem';
+import {
+  Problem,
+  ProblemResponse,
+  createProblemFromProblemResponse,
+} from '@/types/Problem';
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
 import { AxiosResponse } from 'axios';
@@ -52,10 +56,10 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
           user: values.user || undefined,
         },
       })
-      .then((res: AxiosResponse<Problem[]>) => {
+      .then((res: AxiosResponse<ProblemResponse[]>) => {
         // difficultyを丸める
         const difficultyClippedProblems = res.data.map((problem) => ({
-          ...problem,
+          ...createProblemFromProblemResponse(problem),
           difficulty: problem.difficulty && clipDifficulty(problem.difficulty),
         }));
 
