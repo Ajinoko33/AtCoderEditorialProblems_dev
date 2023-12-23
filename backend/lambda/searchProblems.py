@@ -65,7 +65,7 @@ def make_response(data):
         obj["category"] = row["id"][:3].upper()
         obj["title"] = row["title"]
         obj["difficulty"] = row["difficulty"]
-        obj["problem_id"] = row["id"]
+        obj["id"] = row["id"]
         obj["start_epoch_second"] = row["start_epoch_second"]
         obj["sort_order"] = row["sort_order"]
         return obj

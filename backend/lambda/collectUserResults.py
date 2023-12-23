@@ -86,7 +86,7 @@ def make_response(status):
     res = []
     for problemId, resultCode in status.items():
         res.append({
-            "problem_id" : problemId,
+            "id" : problemId,
             "result_code" : resultCode
         })
 
