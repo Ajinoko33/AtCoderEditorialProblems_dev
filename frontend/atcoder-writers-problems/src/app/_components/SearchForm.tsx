@@ -19,8 +19,8 @@ type FieldType = {
   user?: string;
 };
 
-// TODO:バリデーション
-// TODO:問題データ取得
+//TODO:writer取得中の状態表示
+//TODO:問題取得中の状態表示
 
 export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
   const [writers, setWriters] = useState<String[]>([]);
