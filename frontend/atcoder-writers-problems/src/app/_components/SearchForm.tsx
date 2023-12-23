@@ -5,7 +5,7 @@ import {
   ProblemResponse,
   createProblemFromProblemResponse,
 } from '@/types/Problem';
-import { SearchOutlined } from '@ant-design/icons';
+import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
 import { AxiosResponse } from 'axios';
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
@@ -19,11 +19,13 @@ type FieldType = {
   user?: string;
 };
 
-//TODO:writer取得中の状態表示
+type CallSatus = 'Loading' | 'Success' | 'Failure';
+
 //TODO:問題取得中の状態表示
 
 export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
   const [writers, setWriters] = useState<String[]>([]);
+  const [callStatus, setCallStatus] = useState<CallSatus>('Loading');
 
   const validateMessages = {
     required: "'${label}' is required!",
@@ -40,10 +42,12 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
     axiosInstance
       .get('/writers')
       .then((res) => {
+        setCallStatus('Success');
         setWriters(res.data);
       })
       .catch((error) => {
-        console.log('GET error when getting writers!!');
+        setCallStatus('Failure');
+        console.log('Error when getting writers!!');
       });
   }, []);
 
@@ -72,6 +76,7 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
 
   return (
     <Form
+      className='w-72'
       validateMessages={validateMessages}
       onFinish={onFinish}
       labelCol={{ span: 8 }}
@@ -80,6 +85,16 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
         label='Writer'
         name='writer'
         rules={[{ required: true }]}
+        hasFeedback={callStatus === 'Failure'}
+        validateStatus={callStatus === 'Failure' ? 'warning' : undefined}
+        help={
+          callStatus === 'Failure' ? (
+            <>
+              Failed to Loading wirters. <br />
+              Reload this page to try again.
+            </>
+          ) : undefined
+        }
       >
         <Select
           showSearch
@@ -90,6 +105,11 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
               .localeCompare((optionB?.label ?? '').toLowerCase())
           }
           options={createOptions(writers)}
+          suffixIcon={
+            callStatus === 'Loading' ? (
+              <LoadingOutlined style={{ pointerEvents: 'none' }} />
+            ) : undefined
+          }
         />
       </Form.Item>
       <Form.Item<FieldType> label='User ID' name='user'>
