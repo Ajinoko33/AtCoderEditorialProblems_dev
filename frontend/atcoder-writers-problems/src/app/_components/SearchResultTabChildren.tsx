@@ -12,6 +12,7 @@ export type SearchResultTabChildrenProps = {
 
 interface DataType {
   key: string;
+  id: string;
   contest: string;
   title: string;
   difficulty?: number;
@@ -43,7 +44,13 @@ const columns: ColumnsType<DataType> = [
         <span className='mr-1'>
           <DifficultyCircle difficulty={record.difficulty} />
         </span>
-        {text}
+        <a
+          href={`https://atcoder.jp/contests/${record.contest}/tasks/${record.id}`}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          {text}
+        </a>
       </>
     ),
   },
@@ -67,6 +74,7 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   // TODO: diff表示フィルター
   const data: DataType[] = problems.map((problem, idx) => ({
     key: idx.toString(),
+    id: problem.id,
     contest: problem.contest,
     title: problem.title,
     difficulty: problem.difficulty,

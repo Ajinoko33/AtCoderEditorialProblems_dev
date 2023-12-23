@@ -2,6 +2,7 @@ export const categories = ['ABC', 'ARC'] as const;
 export type Category = (typeof categories)[number];
 
 export type Problem = {
+  id: string;
   contest: string;
   category: Category;
   title: string;

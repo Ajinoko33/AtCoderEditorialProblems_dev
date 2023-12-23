@@ -19,6 +19,7 @@ export const problemsData: Problem[] = Array(50)
   .fill(null)
   .map((_, idx) => {
     const problem: Problem = {
+      id: `${categories[idx % 2]}${300 - Math.floor(idx / 2)}_d`,
       contest: `${categories[idx % 2]}${300 - Math.floor(idx / 2)}`,
       category: categories[idx % 2],
       title: 'D. Everywhere is Sparser than Whole (Construction)',
