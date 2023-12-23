@@ -63,7 +63,7 @@ def collect_all_submittions(user):
 
 def analyze_status_code(submittions):
     # 結果を整理
-    # 結果コード(1:AC, 2:未AC)
+    # 結果コード(AC, Trying)
     ptn = re.compile(CONTEST_PATTERN)
     status = {}
     for subm in submittions:
@@ -73,9 +73,10 @@ def analyze_status_code(submittions):
             continue
 
         problemId = subm["problem_id"]
-        resultCode = 1 if subm["result"] == "AC" else 2
+        resultCode = "AC" if subm["result"] == "AC" else "Trying"
         if problemId in status:
-            status[problemId] = min(resultCode, status[problemId])
+            if resultCode == "AC" or status[problemId] == "AC":
+                status[problemId] = "AC"
         else:
             status[problemId] = resultCode
 

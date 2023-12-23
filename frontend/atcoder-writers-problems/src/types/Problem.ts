@@ -1,6 +1,8 @@
 export const categories = ['ABC', 'ARC'] as const;
 export type Category = (typeof categories)[number];
 
+export type ResultCode = 'AC' | 'Trying' | 'Yet';
+
 export type ProblemResponse = {
   id: string;
   contest: string;
@@ -9,14 +11,14 @@ export type ProblemResponse = {
   difficulty?: number;
   start_epoch_second: number;
   sort_order: number;
-  result_code?: number; // 1: AC, 2: 1回以上の提出かつ未AC, undefined: 未提出
+  result_code?: ResultCode;
 };
 
 type OmitProps = 'start_epoch_second' | 'sort_order' | 'result_code';
 export type Problem = Omit<ProblemResponse, OmitProps> & {
   startEpochSecond: number;
   sortOrder: number;
-  resultCode?: number;
+  resultCode: ResultCode;
 };
 
 export const createProblemFromProblemResponse = (
@@ -29,5 +31,5 @@ export const createProblemFromProblemResponse = (
   difficulty: src.difficulty,
   startEpochSecond: src.start_epoch_second,
   sortOrder: src.sort_order,
-  resultCode: src.result_code,
+  resultCode: src.result_code || 'Yet',
 });

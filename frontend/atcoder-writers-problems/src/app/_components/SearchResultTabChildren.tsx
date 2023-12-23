@@ -1,4 +1,4 @@
-import { Problem } from '@/types/Problem';
+import type { Problem, ResultCode } from '@/types/Problem';
 import { Flex, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FC } from 'react';
@@ -18,6 +18,7 @@ interface DataType {
   difficulty?: number;
   sortOrder: number;
   startEpochSecond: number;
+  resultCode: ResultCode;
 }
 
 const columns: ColumnsType<DataType> = [
@@ -67,7 +68,6 @@ const columns: ColumnsType<DataType> = [
 export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   problems,
 }) => {
-  // TODO: ユーザーAC状況反映
   // TODO: 非表示レベル(表示レベル)フィルター
   // TODO: diff表示フィルター
   const data: DataType[] = problems.map((problem, idx) => ({
@@ -78,7 +78,19 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
     difficulty: problem.difficulty,
     sortOrder: problem.sortOrder,
     startEpochSecond: problem.startEpochSecond,
+    resultCode: problem.resultCode,
   }));
+
+  const rowClassName = (record: DataType) => {
+    switch (record.resultCode) {
+      case 'AC':
+        return 'bg-[#C3E6CB]';
+      case 'Trying':
+        return 'bg-[#FFEEBA]';
+      case 'Yet':
+        return '';
+    }
+  };
 
   return (
     <Flex vertical>
@@ -87,6 +99,7 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
         dataSource={data}
         pagination={{ position: ['topCenter', 'bottomCenter'] }}
         className='max-w-xl'
+        rowClassName={rowClassName}
       />
     </Flex>
   );
