@@ -47,7 +47,8 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
       })
       .catch((error) => {
         setCallStatus('Failure');
-        console.log('Error when getting writers!!');
+        console.log('ERROR when getting writers!!');
+        console.log(error);
       });
   }, []);
 
@@ -70,7 +71,8 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
         setProblems(difficultyClippedProblems);
       })
       .catch((error) => {
-        console.log('POST error when getting problems!!');
+        console.log('ERROR when getting problems!!');
+        console.log(error);
       });
   };
 
