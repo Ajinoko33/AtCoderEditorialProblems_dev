@@ -3,7 +3,7 @@ import Link from 'next/link';
 export const HeaderMain = () => {
   return (
     <Link href='/' className='font-bold no-underline text-black'>
-      AtCoder Writer's Problems
+      AtCoder Writer&apos;s Problems
     </Link>
   );
 };
