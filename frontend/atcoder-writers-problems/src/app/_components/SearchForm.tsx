@@ -8,7 +8,7 @@ import {
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
 import { AxiosResponse } from 'axios';
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from 'react';
 
 export type SearchFormProps = {
   setProblems: Dispatch<SetStateAction<Problem[]>>;
@@ -23,7 +23,7 @@ type CallSatus = 'Loading' | 'Success' | 'Failure';
 
 //TODO:問題取得中の状態表示
 
-export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
+export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
   const [writers, setWriters] = useState<String[]>([]);
   const [callStatus, setCallStatus] = useState<CallSatus>('Loading');
 
@@ -122,4 +122,4 @@ export const SearchForm: FC<SearchFormProps> = ({ setProblems }) => {
       </Form.Item>
     </Form>
   );
-};
+});
