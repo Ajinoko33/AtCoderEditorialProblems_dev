@@ -21,8 +21,6 @@ type FieldType = {
 
 type LoadStatus = 'Ready' | 'Loading' | 'Success' | 'Failure';
 
-//TODO:問題取得中の状態表示
-
 export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
   const [writers, setWriters] = useState<string[]>([]);
   const [loadWritersStatus, setLoadWritersStatus] =
