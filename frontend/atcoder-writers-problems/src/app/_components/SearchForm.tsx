@@ -19,13 +19,16 @@ type FieldType = {
   user?: string;
 };
 
-type CallSatus = 'Loading' | 'Success' | 'Failure';
+type LoadStatus = 'Ready' | 'Loading' | 'Success' | 'Failure';
 
 //TODO:問題取得中の状態表示
+//TODO:String -> string
 
 export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
   const [writers, setWriters] = useState<String[]>([]);
-  const [callStatus, setCallStatus] = useState<CallSatus>('Loading');
+  const [loadWritersStatus, setLoadWritersStatus] =
+    useState<LoadStatus>('Ready');
+  const [searchStatus, setSearchStatus] = useState<LoadStatus>('Ready');
 
   const validateMessages = {
     required: "'${label}' is required!",
@@ -39,14 +42,15 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
 
   // Writer全件取得
   useEffect(() => {
+    setLoadWritersStatus('Loading');
     axiosInstance
       .get('/writers')
       .then((res) => {
-        setCallStatus('Success');
+        setLoadWritersStatus('Success');
         setWriters(res.data);
       })
       .catch((error) => {
-        setCallStatus('Failure');
+        setLoadWritersStatus('Failure');
         console.log('ERROR when getting writers!!');
         console.log(error);
       });
@@ -54,6 +58,7 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
 
   // submit
   const onFinish = (values: FieldType) => {
+    setSearchStatus('Loading');
     axiosInstance
       .get('/search', {
         params: {
@@ -62,6 +67,8 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
         },
       })
       .then((res: AxiosResponse<ProblemResponse[]>) => {
+        setSearchStatus('Success');
+
         // difficultyを丸める
         const difficultyClippedProblems = res.data.map((problem) => ({
           ...createProblemFromProblemResponse(problem),
@@ -71,6 +78,7 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
         setProblems(difficultyClippedProblems);
       })
       .catch((error) => {
+        setSearchStatus('Failure');
         console.log('ERROR when getting problems!!');
         console.log(error);
       });
@@ -87,10 +95,10 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
         label='Writer'
         name='writer'
         rules={[{ required: true }]}
-        hasFeedback={callStatus === 'Failure'}
-        validateStatus={callStatus === 'Failure' ? 'warning' : undefined}
+        hasFeedback={loadWritersStatus === 'Failure'}
+        validateStatus={loadWritersStatus === 'Failure' ? 'warning' : undefined}
         help={
-          callStatus === 'Failure' ? (
+          loadWritersStatus === 'Failure' ? (
             <>
               Failed to Loading wirters. <br />
               Reload this page to try again.
@@ -108,7 +116,7 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
           }
           options={createOptions(writers)}
           suffixIcon={
-            callStatus === 'Loading' ? (
+            loadWritersStatus === 'Loading' ? (
               <LoadingOutlined style={{ pointerEvents: 'none' }} />
             ) : undefined
           }
@@ -118,8 +126,13 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type='primary' htmlType='submit' icon={<SearchOutlined />}>
-          Search
+        <Button
+          type='primary'
+          htmlType='submit'
+          icon={<SearchOutlined />}
+          loading={searchStatus === 'Loading'}
+        >
+          {searchStatus === 'Loading' ? 'Searching' : 'Search'}
         </Button>
       </Form.Item>
     </Form>
