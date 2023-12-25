@@ -1,19 +1,29 @@
-import {
-  getProblemIndexOrder,
-  type Problem,
-  type ProblemIndex,
-  type ResultCode,
-} from '@/types/Problem';
+import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { DifficultyCircle } from './DifficultyCircle';
 
 const DIFF_INF = 100000;
+const problemIndexOrders = {
+  A: 10,
+  B: 20,
+  C: 30,
+  D: 40,
+  E: 50,
+  F: 60,
+  F2: 61,
+  G: 70,
+  H: 80,
+  Ex: 81,
+};
 
 export type SearchResultTabChildrenProps = {
   problems: Problem[];
 };
+
+const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
+  problemIndexOrders[problemIndex];
 
 interface DataType {
   key: string;

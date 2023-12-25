@@ -1,14 +1,17 @@
 import { clipDifficulty } from '@/components/external/AtCoderProblems';
 import { axiosInstance } from '@/config/axios';
-import {
-  Problem,
-  ProblemResponse,
-  createProblemFromProblemResponse,
-} from '@/types/Problem';
+import type { Problem, ProblemResponse } from '@/types';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
-import { AxiosResponse } from 'axios';
-import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from 'react';
+import type { AxiosResponse } from 'axios';
+import {
+  memo,
+  useEffect,
+  useState,
+  type Dispatch,
+  type FC,
+  type SetStateAction,
+} from 'react';
 
 export type SearchFormProps = {
   setProblems: Dispatch<SetStateAction<Problem[]>>;
@@ -20,6 +23,17 @@ type FieldType = {
 };
 
 type LoadStatus = 'Ready' | 'Loading' | 'Success' | 'Failure';
+
+const createProblemFromProblemResponse = (src: ProblemResponse): Problem => ({
+  id: src.id,
+  contest: src.contest,
+  category: src.category,
+  name: src.name,
+  difficulty: src.difficulty,
+  startEpochSecond: src.start_epoch_second,
+  resultCode: src.result_code || 'Yet',
+  problemIndex: src.problem_index,
+});
 
 export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
   const [writers, setWriters] = useState<string[]>([]);

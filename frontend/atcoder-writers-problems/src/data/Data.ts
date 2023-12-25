@@ -1,4 +1,9 @@
-import { Problem, ProblemIndex, ResultCode, categories } from '@/types/Problem';
+import {
+  categories,
+  type Problem,
+  type ProblemIndex,
+  type ResultCode,
+} from '@/types';
 
 export const writersData: string[] = [
   'aaaa',

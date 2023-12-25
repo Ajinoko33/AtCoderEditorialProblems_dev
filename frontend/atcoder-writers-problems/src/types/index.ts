@@ -1,3 +1,5 @@
+/*========= Problem ==============================*/
+
 export const categories = ['ABC', 'ARC'] as const;
 export type Category = (typeof categories)[number];
 
@@ -16,20 +18,6 @@ export const problemsIndexs = [
   'Ex',
 ] as const;
 export type ProblemIndex = (typeof problemsIndexs)[number];
-const problemIndexOrders = {
-  A: 10,
-  B: 20,
-  C: 30,
-  D: 40,
-  E: 50,
-  F: 60,
-  F2: 61,
-  G: 70,
-  H: 80,
-  Ex: 81,
-};
-export const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
-  problemIndexOrders[problemIndex];
 
 export type ProblemResponse = {
   id: string;
@@ -49,15 +37,8 @@ export type Problem = Omit<ProblemResponse, OmitProps> & {
   problemIndex: ProblemIndex;
 };
 
-export const createProblemFromProblemResponse = (
-  src: ProblemResponse,
-): Problem => ({
-  id: src.id,
-  contest: src.contest,
-  category: src.category,
-  name: src.name,
-  difficulty: src.difficulty,
-  startEpochSecond: src.start_epoch_second,
-  resultCode: src.result_code || 'Yet',
-  problemIndex: src.problem_index,
-});
+/*========= Error ==============================*/
+
+export type GlobalError = {
+  message: string;
+};

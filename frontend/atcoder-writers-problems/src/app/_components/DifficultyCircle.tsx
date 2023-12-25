@@ -4,7 +4,7 @@ import {
 } from '@/components/external/AtCoderProblems';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { Badge, Tooltip } from 'antd';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 export type DifficultyCircleProps = {
   difficulty?: number;

@@ -1,6 +1,6 @@
-import { Problem, categories } from '@/types/Problem';
+import { categories, type Problem } from '@/types';
 import { Tabs } from 'antd';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { SearchResultTabChildren } from './SearchResultTabChildren';
 
 export type SearchResultProps = {

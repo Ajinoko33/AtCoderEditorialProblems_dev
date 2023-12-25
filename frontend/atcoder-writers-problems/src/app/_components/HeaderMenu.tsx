@@ -4,8 +4,7 @@ import {
   LinkOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Menu, Space } from 'antd';
+import { Menu, Space, type MenuProps } from 'antd';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { useState } from 'react';

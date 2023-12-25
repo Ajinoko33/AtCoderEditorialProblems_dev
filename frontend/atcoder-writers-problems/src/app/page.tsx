@@ -1,7 +1,7 @@
 'use client';
 
 import { problemsData } from '@/data/Data';
-import { Problem } from '@/types/Problem';
+import type { Problem } from '@/types';
 import { Divider, Flex } from 'antd';
 import { useState } from 'react';
 import { SearchForm } from './_components/SearchForm';
