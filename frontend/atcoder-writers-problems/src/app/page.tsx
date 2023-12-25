@@ -1,6 +1,6 @@
 'use client';
 
-import { problemsData } from '@/data/Data';
+import { problemsData } from '@/data/mockData';
 import type { Problem } from '@/types';
 import { Alert, Flex } from 'antd';
 import { useCallback, useState } from 'react';
