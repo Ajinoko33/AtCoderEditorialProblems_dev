@@ -36,9 +36,3 @@ export type Problem = Omit<ProblemResponse, OmitProps> & {
   resultCode: ResultCode;
   problemIndex: ProblemIndex;
 };
-
-/*========= Error ==============================*/
-
-export type GlobalError = {
-  message: string;
-};

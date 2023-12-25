@@ -1,13 +1,13 @@
 import { categories, type Problem } from '@/types';
 import { Tabs } from 'antd';
-import type { FC } from 'react';
+import { memo, type FC } from 'react';
 import { SearchResultTabChildren } from './SearchResultTabChildren';
 
 export type SearchResultProps = {
   problems: Problem[];
 };
 
-export const SearchResult: FC<SearchResultProps> = ({ problems }) => {
+export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   // カテゴリごとにTab生成
   const items = categories.map((category) => {
     const problemsInCategory = problems.filter(
@@ -26,4 +26,4 @@ export const SearchResult: FC<SearchResultProps> = ({ problems }) => {
   });
 
   return <Tabs items={items} tabBarGutter={18} size='middle' centered />;
-};
+});
