@@ -24,9 +24,6 @@ type FieldType = {
   user?: string;
 };
 
-// TODO:Loadingのみのstateに変更
-type LoadStatus = 'Ready' | 'Loading' | 'Success' | 'Failure';
-
 const createProblemFromProblemResponse = (src: ProblemResponse): Problem => ({
   id: src.id,
   contest: src.contest,
@@ -51,31 +48,31 @@ const createOptions = (_wirters: string[]) =>
 export const SearchForm: FC<SearchFormProps> = memo(
   ({ setProblems, setIsLoadingWritersError, setIsSearchingError }) => {
     const [writers, setWriters] = useState<string[]>([]);
-    const [loadWritersStatus, setLoadWritersStatus] =
-      useState<LoadStatus>('Ready');
-    const [searchStatus, setSearchStatus] = useState<LoadStatus>('Ready');
+    const [isLoadingWriters, setIsLoadingWriters] = useState<boolean>(false);
+    const [isSearching, setIsSearching] = useState<boolean>(false);
 
     // Writer全件取得
     useEffect(() => {
-      setLoadWritersStatus('Loading');
+      setIsLoadingWriters(true);
       axiosInstance
         .get('/writers')
         .then((res) => {
-          setLoadWritersStatus('Success');
           setIsLoadingWritersError(false);
           setWriters(res.data);
         })
         .catch((error) => {
-          setLoadWritersStatus('Failure');
           setIsLoadingWritersError(true);
           console.log('ERROR when getting writers!!');
           console.log(error);
+        })
+        .then(() => {
+          setIsLoadingWriters(false);
         });
     }, []);
 
     // submit
     const onFinish = (values: FieldType) => {
-      setSearchStatus('Loading');
+      setIsSearching(true);
       axiosInstance
         .get('/search', {
           params: {
@@ -84,7 +81,6 @@ export const SearchForm: FC<SearchFormProps> = memo(
           },
         })
         .then((res: AxiosResponse<ProblemResponse[]>) => {
-          setSearchStatus('Success');
           setIsSearchingError(false);
 
           // difficultyを丸める
@@ -97,10 +93,12 @@ export const SearchForm: FC<SearchFormProps> = memo(
           setProblems(difficultyClippedProblems);
         })
         .catch((error) => {
-          setSearchStatus('Failure');
           setIsSearchingError(true);
           console.log('ERROR when getting problems!!');
           console.log(error);
+        })
+        .then(() => {
+          setIsSearching(false);
         });
     };
 
@@ -126,7 +124,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
             }
             options={createOptions(writers)}
             suffixIcon={
-              loadWritersStatus === 'Loading' ? (
+              isLoadingWriters ? (
                 <LoadingOutlined style={{ pointerEvents: 'none' }} />
               ) : undefined
             }
@@ -140,9 +138,9 @@ export const SearchForm: FC<SearchFormProps> = memo(
             type='primary'
             htmlType='submit'
             icon={<SearchOutlined />}
-            loading={searchStatus === 'Loading'}
+            loading={isSearching}
           >
-            {searchStatus === 'Loading' ? 'Searching' : 'Search'}
+            {isSearching ? 'Searching' : 'Search'}
           </Button>
         </Form.Item>
       </Form>
