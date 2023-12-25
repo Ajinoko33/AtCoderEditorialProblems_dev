@@ -2,7 +2,7 @@
 
 import { problemsData } from '@/data/Data';
 import type { Problem } from '@/types';
-import { Alert, Divider, Flex } from 'antd';
+import { Alert, Flex } from 'antd';
 import { useState } from 'react';
 import { SearchForm } from './_components/SearchForm';
 import { SearchResult } from './_components/SearchResult';
@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <Flex align='center' vertical>
       {(isLoadingWritersError || isSearchingError) && (
-        <div className='mb-8'>
+        <div className='mt-4'>
           {isLoadingWritersError && (
             <Alert
               message={ErrorMessages.LoadingWriterError}
@@ -40,13 +40,16 @@ export default function Home() {
         </div>
       )}
 
-      <SearchForm
-        setProblems={setProblems}
-        setIsLoadingWritersError={setIsLoadingWritersError}
-        setIsSearchingError={setIsSearchingError}
-      />
-      <Divider />
-      <SearchResult problems={problems} />
+      <div className='mt-8'>
+        <SearchForm
+          setProblems={setProblems}
+          setIsLoadingWritersError={setIsLoadingWritersError}
+          setIsSearchingError={setIsSearchingError}
+        />
+      </div>
+      <div className='mt-2'>
+        <SearchResult problems={problems} />
+      </div>
     </Flex>
   );
 }
