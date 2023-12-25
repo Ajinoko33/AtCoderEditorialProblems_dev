@@ -22,10 +22,9 @@ type FieldType = {
 type LoadStatus = 'Ready' | 'Loading' | 'Success' | 'Failure';
 
 //TODO:問題取得中の状態表示
-//TODO:String -> string
 
 export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
-  const [writers, setWriters] = useState<String[]>([]);
+  const [writers, setWriters] = useState<string[]>([]);
   const [loadWritersStatus, setLoadWritersStatus] =
     useState<LoadStatus>('Ready');
   const [searchStatus, setSearchStatus] = useState<LoadStatus>('Ready');
@@ -34,7 +33,7 @@ export const SearchForm: FC<SearchFormProps> = memo(({ setProblems }) => {
     required: "'${label}' is required!",
   };
 
-  const createOptions = (_wirters: String[]) =>
+  const createOptions = (_wirters: string[]) =>
     _wirters.map((_writer) => ({
       value: _writer,
       label: _writer,
