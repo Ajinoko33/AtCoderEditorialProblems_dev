@@ -4,19 +4,12 @@ import type { Problem, ProblemResponse } from '@/types';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select } from 'antd';
 import type { AxiosResponse } from 'axios';
-import {
-  memo,
-  useEffect,
-  useState,
-  type Dispatch,
-  type FC,
-  type SetStateAction,
-} from 'react';
+import { memo, useEffect, useState, type FC } from 'react';
 
 export type SearchFormProps = {
-  setProblems: Dispatch<SetStateAction<Problem[]>>;
-  setIsLoadingWritersError: Dispatch<SetStateAction<boolean>>;
-  setIsSearchingError: Dispatch<SetStateAction<boolean>>;
+  handleProblemsChange: (newProblems: Problem[]) => void;
+  handleLoadingWritersErrorChange: (occurred: boolean) => void;
+  handleSearchingErrorChange: (occurred: boolean) => void;
 };
 
 type FieldType = {
@@ -46,7 +39,11 @@ const createOptions = (_wirters: string[]) =>
   }));
 
 export const SearchForm: FC<SearchFormProps> = memo(
-  ({ setProblems, setIsLoadingWritersError, setIsSearchingError }) => {
+  ({
+    handleProblemsChange,
+    handleLoadingWritersErrorChange,
+    handleSearchingErrorChange,
+  }) => {
     const [writers, setWriters] = useState<string[]>([]);
     const [isLoadingWriters, setIsLoadingWriters] = useState<boolean>(false);
     const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -57,11 +54,11 @@ export const SearchForm: FC<SearchFormProps> = memo(
       axiosInstance
         .get('/writers')
         .then((res) => {
-          setIsLoadingWritersError(false);
+          handleLoadingWritersErrorChange(false);
           setWriters(res.data);
         })
         .catch((error) => {
-          setIsLoadingWritersError(true);
+          handleLoadingWritersErrorChange(true);
           console.log('ERROR when getting writers!!');
           console.log(error);
         })
@@ -81,7 +78,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
           },
         })
         .then((res: AxiosResponse<ProblemResponse[]>) => {
-          setIsSearchingError(false);
+          handleSearchingErrorChange(false);
 
           // difficultyを丸める
           const difficultyClippedProblems = res.data.map((problem) => ({
@@ -90,10 +87,10 @@ export const SearchForm: FC<SearchFormProps> = memo(
               problem.difficulty && clipDifficulty(problem.difficulty),
           }));
 
-          setProblems(difficultyClippedProblems);
+          handleProblemsChange(difficultyClippedProblems);
         })
         .catch((error) => {
-          setIsSearchingError(true);
+          handleSearchingErrorChange(true);
           console.log('ERROR when getting problems!!');
           console.log(error);
         })
