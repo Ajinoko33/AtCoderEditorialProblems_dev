@@ -1,6 +1,6 @@
 import { categories, type Problem } from '@/types';
 import { Tabs } from 'antd';
-import { memo, type FC } from 'react';
+import { memo, useCallback, useState, type FC } from 'react';
 import { SearchResultTabChildren } from './SearchResultTabChildren';
 
 export type SearchResultProps = {
@@ -8,6 +8,16 @@ export type SearchResultProps = {
 };
 
 export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
+  const [isCustomOpened, setIsCustomOpened] = useState<boolean>(false);
+  const [isDifficultyHidden, setIsDifficultyHidden] = useState<boolean>(false);
+
+  const handleCustomOpened = useCallback((opened: boolean) => {
+    setIsCustomOpened(opened);
+  }, []);
+  const handleDifficultyHidden = useCallback((hidden: boolean) => {
+    setIsDifficultyHidden(hidden);
+  }, []);
+
   // カテゴリごとにTab生成
   const items = categories.map((category) => {
     const problemsInCategory = problems.filter(
@@ -21,7 +31,15 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
         </span>
       ),
       key: category,
-      children: <SearchResultTabChildren problems={problemsInCategory} />,
+      children: (
+        <SearchResultTabChildren
+          problems={problemsInCategory}
+          isCustomOpened={isCustomOpened}
+          handleCustomOpened={handleCustomOpened}
+          isDifficultyHidden={isDifficultyHidden}
+          handleDifficultyHidden={handleDifficultyHidden}
+        />
+      ),
     };
   });
 
