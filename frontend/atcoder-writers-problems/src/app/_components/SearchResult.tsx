@@ -1,7 +1,7 @@
 import { categories, type Problem } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
 import { memo, useCallback, useState, type FC } from 'react';
-import { SearchResultTabChildren } from './SearchResultTabChildren';
+import { SearchResultTabPanel } from './SearchResultTabPanel';
 
 export type SearchResultProps = {
   problems: Problem[];
@@ -32,7 +32,7 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
       ),
       key: category,
       children: (
-        <SearchResultTabChildren
+        <SearchResultTabPanel
           problems={problemsInCategory}
           isCustomOpened={isCustomOpened}
           handleCustomOpenedChange={handleCustomOpenedChange}

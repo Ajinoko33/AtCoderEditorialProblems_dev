@@ -19,7 +19,7 @@ const problemIndexOrders = {
   Ex: 81,
 };
 
-export type SearchResultTabChildrenProps = {
+export type SearchResultTabPanelProps = {
   problems: Problem[];
   isCustomOpened: boolean;
   handleCustomOpenedChange: (opened: boolean) => void;
@@ -86,7 +86,7 @@ const rowClassName: TableProps<DataType>['rowClassName'] = (record) => {
   }
 };
 
-export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
+export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   problems,
   isCustomOpened,
   handleCustomOpenedChange,
