@@ -1,5 +1,12 @@
 import { SettingOutlined } from '@ant-design/icons';
-import { Collapse, Form, Slider, Switch } from 'antd';
+import {
+  Collapse,
+  Form,
+  Slider,
+  Switch,
+  type CollapseProps,
+  type SwitchProps,
+} from 'antd';
 import { type FC } from 'react';
 
 export type TableCustomProps = {
@@ -15,10 +22,10 @@ export const TableCustom: FC<TableCustomProps> = ({
   isDifficultyHidden,
   handleDifficultyHiddenChange,
 }) => {
-  const onChangeCollapse = (key: string | string[]) => {
+  const onChangeCollapse: CollapseProps['onChange'] = (key) => {
     handleCustomOpenedChange(key.includes('1'));
   };
-  const onChangeHideDifficulty = (checked: boolean) => {
+  const onChangeHideDifficulty: SwitchProps['onClick'] = (checked) => {
     handleDifficultyHiddenChange(checked);
   };
 

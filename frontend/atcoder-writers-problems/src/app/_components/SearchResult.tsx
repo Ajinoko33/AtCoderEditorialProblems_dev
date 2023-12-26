@@ -1,5 +1,5 @@
 import { categories, type Problem } from '@/types';
-import { Tabs } from 'antd';
+import { Tabs, type TabsProps } from 'antd';
 import { memo, useCallback, useState, type FC } from 'react';
 import { SearchResultTabChildren } from './SearchResultTabChildren';
 
@@ -19,7 +19,7 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   }, []);
 
   // カテゴリごとにTab生成
-  const items = categories.map((category) => {
+  const items: TabsProps['items'] = categories.map((category) => {
     const problemsInCategory = problems.filter(
       (problem) => problem.category === category,
     );

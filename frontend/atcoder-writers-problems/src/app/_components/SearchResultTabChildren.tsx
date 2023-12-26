@@ -1,6 +1,6 @@
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
-import type { ColumnType, ColumnsType } from 'antd/es/table';
+import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
 import { useMemo, type FC } from 'react';
 import { DifficultyCircle } from './DifficultyCircle';
 import { TableCustom } from './TableCustom';
@@ -75,7 +75,7 @@ const baseColumns: ColumnsType<DataType> = [
   },
 ];
 
-const rowClassName = (record: DataType) => {
+const rowClassName: TableProps<DataType>['rowClassName'] = (record) => {
   switch (record.resultCode) {
     case 'AC':
       return 'bg-[#C3E6CB]';

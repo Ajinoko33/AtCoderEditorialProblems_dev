@@ -2,7 +2,7 @@ import { clipDifficulty } from '@/components/external/AtCoderProblems';
 import { axiosInstance } from '@/config/axios';
 import type { Problem, ProblemResponse } from '@/types';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, type FormProps } from 'antd';
 import type { AxiosResponse } from 'axios';
 import { memo, useEffect, useState, type FC } from 'react';
 
@@ -28,14 +28,14 @@ const createProblemFromProblemResponse = (src: ProblemResponse): Problem => ({
   problemIndex: src.problem_index,
 });
 
-const validateMessages = {
+const validateMessages: FormProps['validateMessages'] = {
   required: "'${label}' is required!",
 };
 
-const createOptions = (_wirters: string[]) =>
-  _wirters.map((_writer) => ({
-    value: _writer,
-    label: _writer,
+const createOptions = (wirters: string[]) =>
+  wirters.map((writer) => ({
+    value: writer,
+    label: writer,
   }));
 
 export const SearchForm: FC<SearchFormProps> = memo(
@@ -68,7 +68,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
     }, []);
 
     // submit
-    const onFinish = (values: FieldType) => {
+    const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
       setIsSearching(true);
       axiosInstance
         .get('/problems', {
