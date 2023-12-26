@@ -71,7 +71,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
     const onFinish = (values: FieldType) => {
       setIsSearching(true);
       axiosInstance
-        .get('/search', {
+        .get('/problems', {
           params: {
             writer: values.writer,
             user: values.user || undefined,
