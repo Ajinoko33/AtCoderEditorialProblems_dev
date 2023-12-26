@@ -11,10 +11,10 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   const [isCustomOpened, setIsCustomOpened] = useState<boolean>(false);
   const [isDifficultyHidden, setIsDifficultyHidden] = useState<boolean>(false);
 
-  const handleCustomOpened = useCallback((opened: boolean) => {
+  const handleCustomOpenedChange = useCallback((opened: boolean) => {
     setIsCustomOpened(opened);
   }, []);
-  const handleDifficultyHidden = useCallback((hidden: boolean) => {
+  const handleDifficultyHiddenChange = useCallback((hidden: boolean) => {
     setIsDifficultyHidden(hidden);
   }, []);
 
@@ -35,9 +35,9 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
         <SearchResultTabChildren
           problems={problemsInCategory}
           isCustomOpened={isCustomOpened}
-          handleCustomOpened={handleCustomOpened}
+          handleCustomOpenedChange={handleCustomOpenedChange}
           isDifficultyHidden={isDifficultyHidden}
-          handleDifficultyHidden={handleDifficultyHidden}
+          handleDifficultyHiddenChange={handleDifficultyHiddenChange}
         />
       ),
     };

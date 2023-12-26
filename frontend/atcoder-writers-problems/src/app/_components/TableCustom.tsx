@@ -4,22 +4,22 @@ import { type FC } from 'react';
 
 export type TableCustomProps = {
   isCustomOpened: boolean;
-  handleCustomOpened: (opened: boolean) => void;
+  handleCustomOpenedChange: (opened: boolean) => void;
   isDifficultyHidden: boolean;
-  handleDifficultyHidden: (hidden: boolean) => void;
+  handleDifficultyHiddenChange: (hidden: boolean) => void;
 };
 
 export const TableCustom: FC<TableCustomProps> = ({
   isCustomOpened,
-  handleCustomOpened,
+  handleCustomOpenedChange,
   isDifficultyHidden,
-  handleDifficultyHidden,
+  handleDifficultyHiddenChange,
 }) => {
   const onChangeCollapse = (key: string | string[]) => {
-    handleCustomOpened(key.includes('1'));
+    handleCustomOpenedChange(key.includes('1'));
   };
   const onChangeHideDifficulty = (checked: boolean) => {
-    handleDifficultyHidden(checked);
+    handleDifficultyHiddenChange(checked);
   };
 
   const items = [

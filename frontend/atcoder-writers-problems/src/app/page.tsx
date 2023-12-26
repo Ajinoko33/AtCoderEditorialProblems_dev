@@ -15,34 +15,32 @@ const ErrorMessages = {
 
 export default function Home() {
   const [problems, setProblems] = useState<Problem[]>(problemsData);
-  const [isLoadingWritersError, setIsLoadingWritersError] =
+  const [hasLoadingWritersError, setHasLoadingWritersError] =
     useState<boolean>(false);
-  const [isSearchingError, setIsSearchingError] = useState<boolean>(false);
+  const [hasSearchingError, setHasSearchingError] = useState<boolean>(false);
 
   const handleProblemsChange = useCallback((newProblems: Problem[]) => {
     setProblems(newProblems);
   }, []);
-
   const handleLoadingWritersErrorChange = useCallback((occurred: boolean) => {
-    setIsLoadingWritersError(occurred);
+    setHasLoadingWritersError(occurred);
   }, []);
-
   const handleSearchingErrorChange = useCallback((occurred: boolean) => {
-    setIsSearchingError(occurred);
+    setHasSearchingError(occurred);
   }, []);
 
   return (
     <Flex align='center' vertical>
-      {(isLoadingWritersError || isSearchingError) && (
+      {(hasLoadingWritersError || hasSearchingError) && (
         <div className='mt-4'>
-          {isLoadingWritersError && (
+          {hasLoadingWritersError && (
             <Alert
               message={ErrorMessages.LoadingWriterError}
               type='error'
               showIcon
             />
           )}
-          {isSearchingError && (
+          {hasSearchingError && (
             <Alert
               message={ErrorMessages.SearchingError}
               type='error'

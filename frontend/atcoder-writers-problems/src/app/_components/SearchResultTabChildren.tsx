@@ -22,9 +22,9 @@ const problemIndexOrders = {
 export type SearchResultTabChildrenProps = {
   problems: Problem[];
   isCustomOpened: boolean;
-  handleCustomOpened: (opened: boolean) => void;
+  handleCustomOpenedChange: (opened: boolean) => void;
   isDifficultyHidden: boolean;
-  handleDifficultyHidden: (hidden: boolean) => void;
+  handleDifficultyHiddenChange: (hidden: boolean) => void;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -89,9 +89,9 @@ const rowClassName = (record: DataType) => {
 export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
   problems,
   isCustomOpened,
-  handleCustomOpened,
+  handleCustomOpenedChange,
   isDifficultyHidden,
-  handleDifficultyHidden,
+  handleDifficultyHiddenChange,
 }) => {
   // TODO: 非表示レベル(表示レベル)フィルター
   // TODO: 表示diff範囲フィルター
@@ -144,9 +144,9 @@ export const SearchResultTabChildren: FC<SearchResultTabChildrenProps> = ({
     () => (
       <TableCustom
         isCustomOpened={isCustomOpened}
-        handleCustomOpened={handleCustomOpened}
+        handleCustomOpenedChange={handleCustomOpenedChange}
         isDifficultyHidden={isDifficultyHidden}
-        handleDifficultyHidden={handleDifficultyHidden}
+        handleDifficultyHiddenChange={handleDifficultyHiddenChange}
       />
     ),
     [isCustomOpened, isDifficultyHidden],
