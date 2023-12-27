@@ -2,6 +2,7 @@ import { categories, type Problem } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
 import { memo, useCallback, useState, type FC } from 'react';
 import { SearchResultTabPanel } from './SearchResultTabPanel';
+import { MAX_DIFFICULTY_RANGE, MIN_DIFFICULTY_RANGE } from './TableCustom';
 
 export type SearchResultProps = {
   problems: Problem[];
@@ -10,12 +11,19 @@ export type SearchResultProps = {
 export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   const [isCustomOpened, setIsCustomOpened] = useState<boolean>(false);
   const [isDifficultyHidden, setIsDifficultyHidden] = useState<boolean>(false);
+  const [difficultyRange, setDifficultyRange] = useState<[number, number]>([
+    MIN_DIFFICULTY_RANGE,
+    MAX_DIFFICULTY_RANGE,
+  ]);
 
   const handleCustomOpenedChange = useCallback((opened: boolean) => {
     setIsCustomOpened(opened);
   }, []);
   const handleDifficultyHiddenChange = useCallback((hidden: boolean) => {
     setIsDifficultyHidden(hidden);
+  }, []);
+  const handleDifficultyRangeChange = useCallback((value: number[]) => {
+    setDifficultyRange([value[0], value[1]]);
   }, []);
 
   // カテゴリごとにTab生成
@@ -38,6 +46,8 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
           handleCustomOpenedChange={handleCustomOpenedChange}
           isDifficultyHidden={isDifficultyHidden}
           handleDifficultyHiddenChange={handleDifficultyHiddenChange}
+          difficultyRange={difficultyRange}
+          handleDifficultyRangeChange={handleDifficultyRangeChange}
         />
       ),
     };

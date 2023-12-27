@@ -3,7 +3,11 @@ import { Flex, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
 import { useMemo, type FC } from 'react';
 import { DifficultyCircle } from './DifficultyCircle';
-import { TableCustom } from './TableCustom';
+import {
+  MAX_DIFFICULTY_RANGE,
+  MIN_DIFFICULTY_RANGE,
+  TableCustom,
+} from './TableCustom';
 
 const DIFF_INF = 100000;
 const problemIndexOrders = {
@@ -25,6 +29,8 @@ export type SearchResultTabPanelProps = {
   handleCustomOpenedChange: (opened: boolean) => void;
   isDifficultyHidden: boolean;
   handleDifficultyHiddenChange: (hidden: boolean) => void;
+  difficultyRange: [number, number];
+  handleDifficultyRangeChange: (newRange: number[]) => void;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -92,19 +98,30 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   handleCustomOpenedChange,
   isDifficultyHidden,
   handleDifficultyHiddenChange,
+  difficultyRange,
+  handleDifficultyRangeChange,
 }) => {
-  // TODO: 非表示レベル(表示レベル)フィルター
-  // TODO: 表示diff範囲フィルター
-  const data: DataType[] = problems.map((problem, idx) => ({
-    key: idx.toString(),
-    id: problem.id,
-    contest: problem.contest,
-    name: problem.name,
-    difficulty: problem.difficulty,
-    startEpochSecond: problem.startEpochSecond,
-    resultCode: problem.resultCode,
-    problemIndex: problem.problemIndex,
-  }));
+  const [first, last] = difficultyRange;
+
+  // TODO: ソートstate
+  const data: DataType[] = useMemo(
+    () =>
+      problems
+        .filter(({ difficulty }) => {
+          if (difficulty === undefined) {
+            return (
+              first === MIN_DIFFICULTY_RANGE && last === MAX_DIFFICULTY_RANGE
+            );
+          } else {
+            return first <= difficulty && difficulty <= last;
+          }
+        })
+        .map((problem, idx) => ({
+          ...problem,
+          key: idx.toString(),
+        })),
+    [problems, difficultyRange],
+  );
 
   const columns = useMemo(
     () =>
@@ -147,9 +164,11 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         handleCustomOpenedChange={handleCustomOpenedChange}
         isDifficultyHidden={isDifficultyHidden}
         handleDifficultyHiddenChange={handleDifficultyHiddenChange}
+        difficultyRange={difficultyRange}
+        handleDifficultyRangeChange={handleDifficultyRangeChange}
       />
     ),
-    [isCustomOpened, isDifficultyHidden],
+    [isCustomOpened, isDifficultyHidden, difficultyRange],
   );
 
   return (
@@ -157,10 +176,14 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
       <Table
         columns={columns}
         dataSource={data}
-        pagination={{ position: ['topCenter', 'bottomCenter'] }}
+        pagination={{
+          position: [],
+          pageSize: 1000,
+        }}
         className='max-w-xl'
         rowClassName={rowClassName}
         title={() => tableCustom}
+        style={{ minHeight: '100vh' }}
       />
     </Flex>
   );
