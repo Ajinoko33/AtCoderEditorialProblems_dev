@@ -1,59 +1,10 @@
 import os
 import textwrap
 
-from aws_lambda_powertools.utilities.validation import validator
 import psycopg2
 
-INBOUND_SCHEMA = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "array",
-    "items": {
-        "type": "object",
-        "required": ["id", "contest_id", "start_epoch_second", "problem_index", "name", "title", "writer"],
-        "properties": {
-            "id": {
-                "type": "string",
-                "maxLength": 255
-            },
-            "contest_id": {
-                "type": "string",
-                "maxLength": 255
-            },
-            "start_epoch_second": {
-                "type": "integer"
-            },
-            "problem_index": {
-                "type": "string",
-                "maxLength": 255
-            },
-            "name": {
-                "type": "string",
-                "maxLength": 255
-            },
-            "title": {
-                "type": "string",
-                "maxLength": 255
-            },
-            "difficulty": {
-                "type": "integer"
-            },
-            "writer": {
-                "type": "string",
-                "maxLength": 255
-            }
-        },
-        "additionalProperties": False
-    }
-}
-
-def get_dsn():
-    # DB接続情報を返す
-    HOST = os.environ["HOST"]
-    PORT = os.environ["PORT"]
-    DBNAME = os.environ["DBNAME"]
-    USER = os.environ["USER"]
-    PASSWORD = os.environ["PASSWORD"]
-    return f"host={HOST} port={PORT} dbname={DBNAME} user={USER} password={PASSWORD}"
+# DB接続情報
+CONN_INFO = f"host={os.environ['HOST']} port={os.environ['PORT']} dbname={os.environ['DBNAME']} user={os.environ['USER']} password={os.environ['PASSWORD']}"
 
 def upsert_into_contests(contests, cur):
     if len(contests.keys()) == 0:
@@ -97,7 +48,7 @@ def upsert_into_problems(problems, cur):
 
     return
 
-def insert_problems(problems, dsn):
+def insert_problems(problems):
     # コンテストを洗い出す
     contests = {}
     for problem in problems:
@@ -105,22 +56,23 @@ def insert_problems(problems, dsn):
             contests[problem["contest_id"]] = problem["start_epoch_second"]
 
     # 登録処理
-    with psycopg2.connect(dsn) as con:
-        with con.cursor() as cur:
-            # コンテストテーブルへ登録
-            upsert_into_contests(contests, cur)
+    try:
+        with psycopg2.connect(CONN_INFO) as conn:
+            with conn.cursor() as cur:
+                # コンテストテーブルへ登録
+                upsert_into_contests(contests, cur)
 
-            # 問題テーブルへ登録
-            upsert_into_problems(problems, cur)
+                # 問題テーブルへ登録
+                upsert_into_problems(problems, cur)
+    except Exception as exception:
+        print("[ERROR] Error in DB Access")
+        print("error detail : ", exception)
+        raise exception
 
     return
 
-@validator(inbound_schema=INBOUND_SCHEMA)
 def lambda_handler(event, context):
-    # DB接続情報を取得
-    dsn = get_dsn()
-
     # 格納
-    insert_problems(event, dsn)
+    insert_problems(event)
 
     return 
