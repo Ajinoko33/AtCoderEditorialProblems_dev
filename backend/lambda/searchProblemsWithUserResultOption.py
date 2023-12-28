@@ -23,7 +23,7 @@ def check_error(res):
 def search_problems(writer):
     # Writer名から問題を検索
     res = CLIENT.invoke(
-        FunctionName="searchProblems",
+        FunctionName="searchProblemsByWriter",
         LogType="Tail",
         Payload=json.dumps({
             "writer":writer
