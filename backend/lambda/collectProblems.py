@@ -14,33 +14,47 @@ API_URL = "https://kenkoooo.com/atcoder/resources"
 EDITORIAL_URL_TEMPLATE = Template("https://atcoder.jp/contests/${contest_id}/editorial?editorialLang=ja&lang=ja")
 # 抽出対象のコンテスト(コンテストIDの先頭3文字)
 TARGET_CONTEST = ["abc", "arc"]
+# 1年間の長さ(秒)
+ONE_YEAR_EPOCH_SECOND = 365 * 24 * 60 * 60
 
 CLIENT = boto3.client("lambda")
 
-def set_props(event):
-    # 値が設定されてなければ設定
-    ONE_YEAR_EPOCH_SECOND = 365 * 24 * 60 * 60
-    exist_from = "from_epoch_second" in event
-    exist_to = "to_epoch_second" in event
-
-    if exist_from and exist_to:
-        return event
-    elif exist_from and not exist_to:
-        event["to_epoch_second"] = event["from_epoch_second"] + ONE_YEAR_EPOCH_SECOND
-        return event
-    elif not exist_from and exist_to:
-        event["from_epoch_second"] = event["to_epoch_second"] - ONE_YEAR_EPOCH_SECOND
-        return event
-    else:
-        event["to_epoch_second"] = math.ceil(datetime.datetime.now().timestamp())
-        event["from_epoch_second"] = event["to_epoch_second"] - ONE_YEAR_EPOCH_SECOND
-        return event
-
-def correlation_validation(event):
+def correlative_validate(event):
     # 時刻大小関係
     if event["from_epoch_second"] > event["to_epoch_second"]:
         print("Invalid inbound:", event)
         raise RuntimeError("Correlation validation error!")
+
+def validate(event):
+    # 値が設定されてなければ設定
+    # 期間は最長1年間
+    exist_from = "from_epoch_second" in event
+    exist_to = "to_epoch_second" in event
+
+    if exist_from and exist_to:
+        # 相関バリデーション
+        correlative_validate(event)
+
+        return {
+            "from_epoch_second": max(event["from_epoch_second"], event["to_epoch_second"] - ONE_YEAR_EPOCH_SECOND),
+            "to_epoch_second": event["to_epoch_second"]
+        }
+    elif exist_from and not exist_to:
+        return {
+            "from_epoch_second": event["from_epoch_second"],
+            "to_epoch_second": event["from_epoch_second"] + ONE_YEAR_EPOCH_SECOND
+        }
+    elif not exist_from and exist_to:
+        return {
+            "from_epoch_second": event["to_epoch_second"] - ONE_YEAR_EPOCH_SECOND,
+            "to_epoch_second": event["to_epoch_second"]
+        }
+    else:
+        now = math.ceil(datetime.datetime.now().timestamp())
+        return {
+            "from_epoch_second": now - ONE_YEAR_EPOCH_SECOND,
+            "to_epoch_second": now
+        }
 
 def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
     # APIからコンテスト開始時刻を取得
@@ -153,11 +167,8 @@ def invoke_save_lambda(problems):
     return
 
 def lambda_handler(event, context):
-    # 値の設定
-    filled_event = set_props(event)
-
-    # 相関バリデーション
-    correlation_validation(filled_event)
+    # バリデーション
+    filled_event = validate(event)
     
     # APIからコンテスト開始時刻取得
     start_epoch_secs = collect_contest_start_epoch_secs(filled_event["from_epoch_second"], filled_event["to_epoch_second"])
