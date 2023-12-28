@@ -56,18 +56,13 @@ def insert_problems(problems):
             contests[problem["contest_id"]] = problem["start_epoch_second"]
 
     # 登録処理
-    try:
-        with psycopg2.connect(CONN_INFO) as conn:
-            with conn.cursor() as cur:
-                # コンテストテーブルへ登録
-                upsert_into_contests(contests, cur)
+    with psycopg2.connect(CONN_INFO) as conn:
+        with conn.cursor() as cur:
+            # コンテストテーブルへ登録
+            upsert_into_contests(contests, cur)
 
-                # 問題テーブルへ登録
-                upsert_into_problems(problems, cur)
-    except Exception as exception:
-        print("[ERROR] Error in DB Access")
-        print("error detail : ", exception)
-        raise exception
+            # 問題テーブルへ登録
+            upsert_into_problems(problems, cur)
 
     return
 

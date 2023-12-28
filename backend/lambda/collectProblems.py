@@ -4,7 +4,6 @@ import json
 import math
 from string import Template
 
-from aws_lambda_powertools.utilities.validation import validator
 import requests
 from bs4 import BeautifulSoup
 import boto3
@@ -17,20 +16,6 @@ EDITORIAL_URL_TEMPLATE = Template("https://atcoder.jp/contests/${contest_id}/edi
 TARGET_CONTEST = ["abc", "arc"]
 
 CLIENT = boto3.client("lambda")
-
-INBOUND_SCHEMA = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "properties": {
-        "from_epoch_second": {
-            "type": "integer"
-        },
-        "to_epoch_second": {
-            "type": "integer"
-        }
-    },
-    "additionalProperties": False
-}
 
 def set_props(event):
     # 値が設定されてなければ設定
@@ -63,7 +48,7 @@ def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
     res = requests.get(url)
 
     if res.status_code != 200:
-        # API先でのエラー
+        # HTTPリクエストエラー
         res.raise_for_status()
 
     contests = json.loads(res.text)
@@ -77,7 +62,7 @@ def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
 
     return ret
     
-def extract_contests(contest_ids):
+def extract_target_contests(contest_ids):
     # 対象コンテストのIDを抽出
     return list(filter(lambda contest_id: contest_id[:3] in TARGET_CONTEST, contest_ids))
 
@@ -87,7 +72,7 @@ def collect_problems(contest_ids):
     res = requests.get(url)
 
     if res.status_code != 200:
-        # API先でのエラー
+        # HTTPリクエストエラー
         res.raise_for_status()
 
     problems = json.loads(res.text)
@@ -103,7 +88,7 @@ def collect_difficulty(problem_ids):
     res = requests.get(url)
 
     if res.status_code != 200:
-        # API先でのエラー
+        # HTTPリクエストエラー
         res.raise_for_status()
 
     problem_models = json.loads(res.text)
@@ -160,12 +145,13 @@ def invoke_save_lambda(problems):
     )
 
     if res["StatusCode"] != 202:
-        print("Status code:", res["StatusCode"])
-        raise RuntimeError("Lambda invocation error!")
+        # 呼び出しエラー
+        print("[ERROR] Lambda Invocation Error")
+        print("invocation result: ", res)
+        raise RuntimeError("Lambda Invocation Error")
 
     return
 
-@validator(inbound_schema=INBOUND_SCHEMA)
 def lambda_handler(event, context):
     # 値の設定
     filled_event = set_props(event)
@@ -177,7 +163,7 @@ def lambda_handler(event, context):
     start_epoch_secs = collect_contest_start_epoch_secs(filled_event["from_epoch_second"], filled_event["to_epoch_second"])
 
     # 対象コンテストのIDを抽出
-    contest_ids = extract_contests(start_epoch_secs.keys())
+    contest_ids = extract_target_contests(start_epoch_secs.keys())
     
     # APIから問題情報取得
     problems = collect_problems(contest_ids)

@@ -6,13 +6,15 @@ import boto3
 
 CLIENT = boto3.client("lambda")
 
+# 1週間の長さ(秒)
+ONE_WEEK_EPOCH_SECOND = 7 * 24 * 60 * 60
+
 def lambda_handler(event, context):
     # 入力値作成
-    ONE_WEEK_EPOCH_SECOND = 7 * 24 * 60 * 60
-    NOW = math.ceil(datetime.datetime.now().timestamp())
+    now = math.ceil(datetime.datetime.now().timestamp())
     payload = {
-        "from_epoch_second": NOW - ONE_WEEK_EPOCH_SECOND,
-        "to_epoch_second": NOW
+        "from_epoch_second": now - ONE_WEEK_EPOCH_SECOND,
+        "to_epoch_second": now
     }
 
     # lambda呼び出し(非同期処理)
@@ -24,7 +26,8 @@ def lambda_handler(event, context):
     )
 
     if res["StatusCode"] != 202:
-        print("Status code:", res["StatusCode"])
-        raise RuntimeError("Lambda invocation error!")
+        print("[ERROR] Lambda Invocation Error")
+        print("invocation result: ", res)
+        raise RuntimeError("Lambda Invocation Error")
 
     return
