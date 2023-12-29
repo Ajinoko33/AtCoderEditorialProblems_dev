@@ -1,7 +1,7 @@
 import React from 'react';
 import { RatingColor, getRatingColorCode } from './utils';
 
-type RatingMetalColor = 'Bronze' | 'Silver' | 'Gold';
+export type RatingMetalColor = 'Bronze' | 'Silver' | 'Gold';
 const getRatingMetalColorCode = (metalColor: RatingMetalColor) => {
   switch (metalColor) {
     case 'Bronze':
