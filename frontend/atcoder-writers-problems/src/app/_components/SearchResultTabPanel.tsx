@@ -1,4 +1,5 @@
 import { ColumnTitleWithSorter } from '@/components/ColumnTitleWithSorter';
+import { LinkToOutside } from '@/components/LinkToOutside';
 import type { UpdateRangeHandler } from '@/hooks/Range';
 import type { SortOrderHandlers } from '@/hooks/sortOrder';
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
@@ -150,13 +151,11 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
                       <DifficultyCircle difficulty={record.difficulty} />
                     </span>
                   )}
-                  <a
+                  <LinkToOutside
                     href={`https://atcoder.jp/contests/${record.contest}/tasks/${record.id}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    {text}
-                  </a>
+                    text={text}
+                    iconSize='none'
+                  />
                 </>
               ),
             };

@@ -1,10 +1,10 @@
+import { LinkToOutside } from '@/components/LinkToOutside';
 import {
-  ExportOutlined,
   FileSearchOutlined,
   LinkOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Menu, Space, type MenuProps } from 'antd';
+import { Menu, type MenuProps } from 'antd';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { useState } from 'react';
@@ -16,8 +16,8 @@ const items: MenuProps['items'] = [
     icon: <FileSearchOutlined />,
   },
   {
-    label: <Link href='/howToUse'>使い方</Link>,
-    key: 'howToUse',
+    label: <Link href='/help'>ヘルプ</Link>,
+    key: 'help',
     icon: <QuestionCircleOutlined />,
   },
   {
@@ -26,32 +26,15 @@ const items: MenuProps['items'] = [
     icon: <LinkOutlined />,
     children: [
       {
-        label: (
-          <Space>
-            <a
-              href='https://atcoder.jp/'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              AtCoder
-            </a>
-            <ExportOutlined style={{ color: '#4B5563' }} />
-          </Space>
-        ),
+        label: <LinkToOutside href='https://atcoder.jp/' text='AtCoder' />,
         key: 'atcoder',
       },
       {
         label: (
-          <Space>
-            <a
-              href='https://twitter.com/Ajinoko33'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              @Ajinoko33
-            </a>
-            <ExportOutlined style={{ color: '#4B5563' }} />
-          </Space>
+          <LinkToOutside
+            href='https://twitter.com/Ajinoko33'
+            text='@Ajinoko33'
+          />
         ),
         key: 'twitter',
       },

@@ -5,5 +5,7 @@ export type MainContainerProps = {
 };
 
 export const MainContainer: FC<MainContainerProps> = ({ children }) => {
-  return <main className='container max-w-2xl mx-auto mt-4'>{children}</main>;
+  return (
+    <main className='container max-w-2xl mx-auto pt-4 px-4'>{children}</main>
+  );
 };
