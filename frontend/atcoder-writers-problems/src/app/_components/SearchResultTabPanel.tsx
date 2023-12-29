@@ -116,7 +116,6 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
 }) => {
   const [first, last] = difficultyRange;
 
-  // TODO: ソートstate
   const data: DataType[] = useMemo(
     () =>
       problems
