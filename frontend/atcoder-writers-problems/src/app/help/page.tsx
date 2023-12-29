@@ -46,7 +46,7 @@ export default function Page() {
         >
           AtCoder Problems
         </LinkToOutside>
-        で推定されている、問題ごとの難易度の指標です。出題されたコンテスト中の提出より算出された「その問題を50%の確率で解けるレートの値」が、その問題のdifficultyと定義されています。詳しくは
+        で推定されている、問題ごとの難易度の指標です。コンテスト中の提出より算出された「その問題を50%の確率で解けるレートの値」が、その問題のdifficultyと定義されています。詳しくは
         <LinkToOutside
           href='https://pepsin-amylase.hatenablog.com/entry/atcoder-problems-difficulty'
           iconSize='none'
