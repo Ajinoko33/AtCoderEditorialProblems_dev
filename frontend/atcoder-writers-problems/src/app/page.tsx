@@ -1,23 +1,19 @@
 'use client';
 
 import { problemsData } from '@/data/mockData';
+import { useTrigger } from '@/hooks/Trigger';
 import type { Problem } from '@/types';
 import { Alert, Flex } from 'antd';
 import { useCallback, useState } from 'react';
 import { SearchForm } from './_components/SearchForm';
 import { SearchResult } from './_components/SearchResult';
 
-const ErrorMessages = {
-  LoadingWriterError:
-    'Failed to loading wirters. Reload this page to try again.',
-  SearchingError: 'Failed to searching problems.',
-};
-
 export default function Home() {
   const [problems, setProblems] = useState<Problem[]>(problemsData);
   const [hasLoadingWritersError, setHasLoadingWritersError] =
     useState<boolean>(false);
   const [hasSearchingError, setHasSearchingError] = useState<boolean>(false);
+  const [retryTrigger, retry] = useTrigger();
 
   const handleProblemsChange = useCallback((newProblems: Problem[]) => {
     setProblems(newProblems);
@@ -35,14 +31,24 @@ export default function Home() {
         <div className='mt-4'>
           {hasLoadingWritersError && (
             <Alert
-              message={ErrorMessages.LoadingWriterError}
+              message={
+                <>
+                  {'Failed to loading wirters. '}
+                  <span
+                    className='text-[#1677FF] cursor-pointer hover:text-[#69B1FF] transition-colors duration-300'
+                    onClick={retry}
+                  >
+                    Click here to try again.
+                  </span>
+                </>
+              }
               type='error'
               showIcon
             />
           )}
           {hasSearchingError && (
             <Alert
-              message={ErrorMessages.SearchingError}
+              message={'Failed to searching problems.'}
               type='error'
               showIcon
             />
@@ -55,6 +61,7 @@ export default function Home() {
           handleProblemsChange={handleProblemsChange}
           handleLoadingWritersErrorChange={handleLoadingWritersErrorChange}
           handleSearchingErrorChange={handleSearchingErrorChange}
+          retryTrigger={retryTrigger}
         />
       </div>
       <div className='mt-2'>

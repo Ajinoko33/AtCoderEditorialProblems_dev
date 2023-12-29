@@ -10,6 +10,7 @@ export type SearchFormProps = {
   handleProblemsChange: (newProblems: Problem[]) => void;
   handleLoadingWritersErrorChange: (occurred: boolean) => void;
   handleSearchingErrorChange: (occurred: boolean) => void;
+  retryTrigger: boolean;
 };
 
 type FieldType = {
@@ -43,6 +44,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
     handleProblemsChange,
     handleLoadingWritersErrorChange,
     handleSearchingErrorChange,
+    retryTrigger,
   }) => {
     const [writers, setWriters] = useState<string[]>([]);
     const [isLoadingWriters, setIsLoadingWriters] = useState<boolean>(false);
@@ -51,10 +53,10 @@ export const SearchForm: FC<SearchFormProps> = memo(
     // Writer全件取得
     useEffect(() => {
       setIsLoadingWriters(true);
+      handleLoadingWritersErrorChange(false);
       axiosInstance
         .get('/writers')
         .then((res) => {
-          handleLoadingWritersErrorChange(false);
           setWriters(res.data);
         })
         .catch((error) => {
@@ -65,12 +67,13 @@ export const SearchForm: FC<SearchFormProps> = memo(
         .then(() => {
           setIsLoadingWriters(false);
         });
-    }, []);
+    }, [retryTrigger]);
 
     // submit
     const onFinish: FormProps<FieldType>['onFinish'] = useCallback(
       (values: FieldType) => {
         setIsSearching(true);
+        handleSearchingErrorChange(false);
         axiosInstance
           .get('/problems', {
             params: {
@@ -79,8 +82,6 @@ export const SearchForm: FC<SearchFormProps> = memo(
             },
           })
           .then((res: AxiosResponse<ProblemResponse[]>) => {
-            handleSearchingErrorChange(false);
-
             // difficultyを丸める
             const difficultyClippedProblems = res.data.map((problem) => ({
               ...createProblemFromProblemResponse(problem),
