@@ -43,6 +43,10 @@ th.ant-table-column-has-sorters:hover {
   background-color: #fafafa !important;
 }
 
+div.ant-typography,span.ant-typography {
+  font-size: 16px !important;
+}
+
 /* Original */
 
 .table-column-sorters:hover .table-column-sorter-inactive {
