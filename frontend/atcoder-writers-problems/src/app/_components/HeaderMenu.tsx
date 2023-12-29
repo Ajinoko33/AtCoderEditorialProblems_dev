@@ -26,15 +26,16 @@ const items: MenuProps['items'] = [
     icon: <LinkOutlined />,
     children: [
       {
-        label: <LinkToOutside href='https://atcoder.jp/' text='AtCoder' />,
+        label: (
+          <LinkToOutside href='https://atcoder.jp/'>AtCoder</LinkToOutside>
+        ),
         key: 'atcoder',
       },
       {
         label: (
-          <LinkToOutside
-            href='https://twitter.com/Ajinoko33'
-            text='@Ajinoko33'
-          />
+          <LinkToOutside href='https://twitter.com/Ajinoko33'>
+            @Ajinoko33
+          </LinkToOutside>
         ),
         key: 'twitter',
       },

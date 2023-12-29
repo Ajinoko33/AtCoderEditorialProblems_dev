@@ -1,22 +1,22 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
 export type LinkToOutsideProps = {
-  text: string;
   href: string;
   iconSize?: 'normal' | 'small' | 'none';
+  children: ReactNode;
 };
 
 export const LinkToOutside: FC<LinkToOutsideProps> = ({
-  text,
   href,
   iconSize = 'normal',
+  children,
 }) => {
   return (
     <Space>
       <a href={href} target='_blank' rel='noopener noreferrer'>
-        {text}
+        {children}
       </a>
       {iconSize !== 'none' && (
         <ExportOutlined

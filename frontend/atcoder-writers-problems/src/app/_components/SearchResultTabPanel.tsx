@@ -153,9 +153,10 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
                   )}
                   <LinkToOutside
                     href={`https://atcoder.jp/contests/${record.contest}/tasks/${record.id}`}
-                    text={text}
                     iconSize='none'
-                  />
+                  >
+                    {text}
+                  </LinkToOutside>
                 </>
               ),
             };
