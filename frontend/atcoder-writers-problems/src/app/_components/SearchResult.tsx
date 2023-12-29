@@ -1,6 +1,6 @@
+import { useSortOrder } from '@/hooks/sortOrder';
 import { categories, type Problem } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
-import type { SortOrder } from 'antd/es/table/interface';
 import { memo, useCallback, useState, type FC } from 'react';
 import { SearchResultTabPanel } from './SearchResultTabPanel';
 import { MAX_DIFFICULTY_RANGE, MIN_DIFFICULTY_RANGE } from './TableCustom';
@@ -16,10 +16,9 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
     MIN_DIFFICULTY_RANGE,
     MAX_DIFFICULTY_RANGE,
   ]);
-  const [contestIdSortOrder, setContestIdSortOrder] =
-    useState<SortOrder>('descend');
-  const [difficultySortOrder, setDifficultySortOrder] =
-    useState<SortOrder>(null);
+  const [contestIdSortOrder, contestIdSortOrderHandlers] =
+    useSortOrder('descend');
+  const [difficultySortOrder, difficultySortOrderHandlers] = useSortOrder(null);
 
   const handleCustomOpenedChange = useCallback((opened: boolean) => {
     setIsCustomOpened(opened);
@@ -29,12 +28,6 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   }, []);
   const handleDifficultyRangeChange = useCallback((value: number[]) => {
     setDifficultyRange([value[0], value[1]]);
-  }, []);
-  const handleContestIdSortOrderChange = useCallback((order: SortOrder) => {
-    setContestIdSortOrder(order);
-  }, []);
-  const handleDifficultySortOrderChange = useCallback((order: SortOrder) => {
-    setDifficultySortOrder(order);
   }, []);
 
   // カテゴリごとにTab生成
@@ -61,9 +54,9 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
           difficultyRange={difficultyRange}
           handleDifficultyRangeChange={handleDifficultyRangeChange}
           contestIdSortOrder={contestIdSortOrder}
-          handleContestIdSortOrderChange={handleContestIdSortOrderChange}
+          contestIdSortOrderHandlers={contestIdSortOrderHandlers}
           difficultySortOrder={difficultySortOrder}
-          handleDifficultySortOrderChange={handleDifficultySortOrderChange}
+          difficultySortOrderHandlers={difficultySortOrderHandlers}
         />
       ),
     };

@@ -42,3 +42,9 @@ th.ant-table-column-sort {
 th.ant-table-column-has-sorters:hover {
   background-color: #fafafa !important;
 }
+
+/* Original */
+
+.table-column-sorters:hover .table-column-sorter-inactive {
+  color: #00000091 !important;
+}

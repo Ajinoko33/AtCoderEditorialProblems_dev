@@ -1,8 +1,10 @@
+import { ColumnTitleWithSorter } from '@/components/ColumnTitleWithSorter';
+import type { SortOrderHandlers } from '@/hooks/sortOrder';
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
 import type { SortOrder } from 'antd/es/table/interface';
-import { useMemo, type FC } from 'react';
+import { useCallback, useMemo, type FC } from 'react';
 import { DifficultyCircle } from './DifficultyCircle';
 import {
   MAX_DIFFICULTY_RANGE,
@@ -33,9 +35,9 @@ export type SearchResultTabPanelProps = {
   difficultyRange: [number, number];
   handleDifficultyRangeChange: (newRange: number[]) => void;
   contestIdSortOrder: SortOrder;
-  handleContestIdSortOrderChange: (order: SortOrder) => void;
+  contestIdSortOrderHandlers: SortOrderHandlers;
   difficultySortOrder: SortOrder;
-  handleDifficultySortOrderChange: (order: SortOrder) => void;
+  difficultySortOrderHandlers: SortOrderHandlers;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -54,7 +56,7 @@ interface DataType {
 
 const baseColumns: ColumnsType<DataType> = [
   {
-    title: 'ID',
+    // title: 'ID', keyより生成
     dataIndex: 'contest',
     key: 'ID',
     width: 110,
@@ -62,7 +64,7 @@ const baseColumns: ColumnsType<DataType> = [
       a.startEpochSecond - b.startEpochSecond ||
       getProblemIndexOrder(a.problemIndex) -
         getProblemIndexOrder(b.problemIndex),
-    sortDirections: ['ascend', 'descend', 'ascend'],
+    sortDirections: [],
     // defaultSortOrder: 動的に設定
     showSorterTooltip: false,
     render: (text, record) => `${record.contest} - ${record.problemIndex}`,
@@ -75,12 +77,12 @@ const baseColumns: ColumnsType<DataType> = [
     // render: 動的に設定
   },
   {
-    title: 'diff',
+    // title: 'diff', keyより生成
     dataIndex: 'difficulty',
     key: 'diff',
     width: 80,
     sorter: (a, b) => (a.difficulty || -DIFF_INF) - (b.difficulty || -DIFF_INF),
-    sortDirections: ['ascend', 'descend', 'ascend'],
+    sortDirections: [],
     // defaultSortOrder: 動的に設定
     showSorterTooltip: false,
     render: (text) => text || '-',
@@ -107,9 +109,9 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   difficultyRange,
   handleDifficultyRangeChange,
   contestIdSortOrder,
-  handleContestIdSortOrderChange,
+  contestIdSortOrderHandlers,
   difficultySortOrder,
-  handleDifficultySortOrderChange,
+  difficultySortOrderHandlers,
 }) => {
   const [first, last] = difficultyRange;
 
@@ -167,22 +169,67 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
     [isDifficultyHidden],
   );
 
+  const onClickContestIdSorter = useCallback(() => {
+    contestIdSortOrderHandlers._switch();
+    difficultySortOrderHandlers.disable();
+  }, []);
+  const onClickDifficultySorter = useCallback(() => {
+    difficultySortOrderHandlers._switch();
+    contestIdSortOrderHandlers.disable();
+  }, []);
+
   const columnsWithSortOrder = useMemo(
     () =>
-      columns.map((column) => {
-        // ソート
-        // コンテストIDとdiffのどちらか一方がnull
-        if (contestIdSortOrder !== null) {
-          if (column.key === 'ID') {
-            column.defaultSortOrder = contestIdSortOrder;
+      columns
+        .map((column) => {
+          // ソート
+          // コンテストIDとdiffのどちらか一方がnull
+          if (contestIdSortOrder !== null) {
+            if (column.key === 'ID') {
+              return {
+                ...column,
+                sortOrder: contestIdSortOrder,
+              };
+            }
+          } else if (difficultySortOrder !== null) {
+            if (column.key === 'diff') {
+              return {
+                ...column,
+                sortOrder: difficultySortOrder,
+              };
+            }
           }
-        } else if (difficultySortOrder !== null) {
-          if (column.key === 'diff') {
-            column.defaultSortOrder = difficultySortOrder;
+          return column;
+        })
+        .map((column) => {
+          // タイトルの表示を同期
+          switch (column.key) {
+            case 'ID':
+              return {
+                ...column,
+                title: (
+                  <ColumnTitleWithSorter
+                    title={column.key}
+                    sortOrder={contestIdSortOrder}
+                    onClick={onClickContestIdSorter}
+                  />
+                ),
+              };
+            case 'diff':
+              return {
+                ...column,
+                title: (
+                  <ColumnTitleWithSorter
+                    title={column.key}
+                    sortOrder={difficultySortOrder}
+                    onClick={onClickDifficultySorter}
+                  />
+                ),
+              };
+            default:
+              return column;
           }
-        }
-        return column;
-      }),
+        }),
     [columns, contestIdSortOrder, difficultySortOrder],
   );
 
@@ -211,7 +258,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         }}
         className='max-w-xl'
         rowClassName={rowClassName}
-        title={() => tableCustom}
+        title={()=>tableCustom}
         style={{ minHeight: '100vh' }}
       />
     </Flex>
