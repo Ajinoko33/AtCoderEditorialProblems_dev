@@ -35,7 +35,7 @@ export default function Page() {
         のみを収集しています。（ユーザ解説も含め他の解説も取得できるよう改修予定です）
       </Paragraph>
       <Paragraph>
-        なお、初期のコンテストで見られるPDFの解説は情報収集対象外です。
+        なお、初期のコンテストで見られるPDFの解説はサポート対象外です。
       </Paragraph>
 
       <Title level={2}>difficulty/diffとは？</Title>
