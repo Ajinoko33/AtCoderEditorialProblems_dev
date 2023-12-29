@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <Flex align='center' vertical>
       {(hasLoadingWritersError || hasSearchingError) && (
-        <div className='mt-4'>
+        <div className='mb-4'>
           {hasLoadingWritersError && (
             <Alert
               message={
@@ -56,7 +56,7 @@ export default function Home() {
         </div>
       )}
 
-      <div className='mt-8'>
+      <div className='mt-4'>
         <SearchForm
           handleProblemsChange={handleProblemsChange}
           handleLoadingWritersErrorChange={handleLoadingWritersErrorChange}
