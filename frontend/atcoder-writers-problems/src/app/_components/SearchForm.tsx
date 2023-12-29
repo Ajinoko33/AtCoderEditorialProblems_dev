@@ -4,7 +4,7 @@ import type { Problem, ProblemResponse } from '@/types';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Form, Input, Select, type FormProps } from 'antd';
 import type { AxiosResponse } from 'axios';
-import { memo, useEffect, useState, type FC } from 'react';
+import { memo, useCallback, useEffect, useState, type FC } from 'react';
 
 export type SearchFormProps = {
   handleProblemsChange: (newProblems: Problem[]) => void;
@@ -68,36 +68,39 @@ export const SearchForm: FC<SearchFormProps> = memo(
     }, []);
 
     // submit
-    const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-      setIsSearching(true);
-      axiosInstance
-        .get('/problems', {
-          params: {
-            writer: values.writer,
-            user: values.user || undefined,
-          },
-        })
-        .then((res: AxiosResponse<ProblemResponse[]>) => {
-          handleSearchingErrorChange(false);
+    const onFinish: FormProps<FieldType>['onFinish'] = useCallback(
+      (values: FieldType) => {
+        setIsSearching(true);
+        axiosInstance
+          .get('/problems', {
+            params: {
+              writer: values.writer,
+              user: values.user || undefined,
+            },
+          })
+          .then((res: AxiosResponse<ProblemResponse[]>) => {
+            handleSearchingErrorChange(false);
 
-          // difficultyを丸める
-          const difficultyClippedProblems = res.data.map((problem) => ({
-            ...createProblemFromProblemResponse(problem),
-            difficulty:
-              problem.difficulty && clipDifficulty(problem.difficulty),
-          }));
+            // difficultyを丸める
+            const difficultyClippedProblems = res.data.map((problem) => ({
+              ...createProblemFromProblemResponse(problem),
+              difficulty:
+                problem.difficulty && clipDifficulty(problem.difficulty),
+            }));
 
-          handleProblemsChange(difficultyClippedProblems);
-        })
-        .catch((error) => {
-          handleSearchingErrorChange(true);
-          console.log('ERROR when getting problems!!');
-          console.log(error);
-        })
-        .then(() => {
-          setIsSearching(false);
-        });
-    };
+            handleProblemsChange(difficultyClippedProblems);
+          })
+          .catch((error) => {
+            handleSearchingErrorChange(true);
+            console.log('ERROR when getting problems!!');
+            console.log(error);
+          })
+          .then(() => {
+            setIsSearching(false);
+          });
+      },
+      [],
+    );
 
     return (
       <Form
