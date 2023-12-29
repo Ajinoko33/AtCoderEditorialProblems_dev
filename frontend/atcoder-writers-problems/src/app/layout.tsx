@@ -7,8 +7,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "AtCoder Writer's Problems",
-  description: 'AtCoderの問題をWriterで検索することができます!!',
+  title: 'AtCoder Editorial Problems',
+  description: 'AtCoderの問題を解説の筆者から検索することができます。',
 };
 
 export default function RootLayout({
