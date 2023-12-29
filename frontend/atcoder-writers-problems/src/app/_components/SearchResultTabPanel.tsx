@@ -1,6 +1,7 @@
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
+import type { SortOrder } from 'antd/es/table/interface';
 import { useMemo, type FC } from 'react';
 import { DifficultyCircle } from './DifficultyCircle';
 import {
@@ -31,6 +32,10 @@ export type SearchResultTabPanelProps = {
   handleDifficultyHiddenChange: (hidden: boolean) => void;
   difficultyRange: [number, number];
   handleDifficultyRangeChange: (newRange: number[]) => void;
+  contestIdSortOrder: SortOrder;
+  handleContestIdSortOrderChange: (order: SortOrder) => void;
+  difficultySortOrder: SortOrder;
+  handleDifficultySortOrderChange: (order: SortOrder) => void;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -58,7 +63,7 @@ const baseColumns: ColumnsType<DataType> = [
       getProblemIndexOrder(a.problemIndex) -
         getProblemIndexOrder(b.problemIndex),
     sortDirections: ['ascend', 'descend', 'ascend'],
-    defaultSortOrder: 'descend',
+    // defaultSortOrder: 動的に設定
     showSorterTooltip: false,
     render: (text, record) => `${record.contest} - ${record.problemIndex}`,
   },
@@ -76,6 +81,7 @@ const baseColumns: ColumnsType<DataType> = [
     width: 80,
     sorter: (a, b) => (a.difficulty || -DIFF_INF) - (b.difficulty || -DIFF_INF),
     sortDirections: ['ascend', 'descend', 'ascend'],
+    // defaultSortOrder: 動的に設定
     showSorterTooltip: false,
     render: (text) => text || '-',
   },
@@ -100,6 +106,10 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   handleDifficultyHiddenChange,
   difficultyRange,
   handleDifficultyRangeChange,
+  contestIdSortOrder,
+  handleContestIdSortOrderChange,
+  difficultySortOrder,
+  handleDifficultySortOrderChange,
 }) => {
   const [first, last] = difficultyRange;
 
@@ -157,6 +167,25 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
     [isDifficultyHidden],
   );
 
+  const columnsWithSortOrder = useMemo(
+    () =>
+      columns.map((column) => {
+        // ソート
+        // コンテストIDとdiffのどちらか一方がnull
+        if (contestIdSortOrder !== null) {
+          if (column.key === 'ID') {
+            column.defaultSortOrder = contestIdSortOrder;
+          }
+        } else if (difficultySortOrder !== null) {
+          if (column.key === 'diff') {
+            column.defaultSortOrder = difficultySortOrder;
+          }
+        }
+        return column;
+      }),
+    [columns, contestIdSortOrder, difficultySortOrder],
+  );
+
   const tableCustom = useMemo(
     () => (
       <TableCustom
@@ -174,7 +203,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   return (
     <Flex vertical>
       <Table
-        columns={columns}
+        columns={columnsWithSortOrder}
         dataSource={data}
         pagination={{
           position: [],

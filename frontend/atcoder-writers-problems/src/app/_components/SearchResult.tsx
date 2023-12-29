@@ -1,5 +1,6 @@
 import { categories, type Problem } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
+import type { SortOrder } from 'antd/es/table/interface';
 import { memo, useCallback, useState, type FC } from 'react';
 import { SearchResultTabPanel } from './SearchResultTabPanel';
 import { MAX_DIFFICULTY_RANGE, MIN_DIFFICULTY_RANGE } from './TableCustom';
@@ -15,6 +16,10 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
     MIN_DIFFICULTY_RANGE,
     MAX_DIFFICULTY_RANGE,
   ]);
+  const [contestIdSortOrder, setContestIdSortOrder] =
+    useState<SortOrder>('descend');
+  const [difficultySortOrder, setDifficultySortOrder] =
+    useState<SortOrder>(null);
 
   const handleCustomOpenedChange = useCallback((opened: boolean) => {
     setIsCustomOpened(opened);
@@ -24,6 +29,12 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   }, []);
   const handleDifficultyRangeChange = useCallback((value: number[]) => {
     setDifficultyRange([value[0], value[1]]);
+  }, []);
+  const handleContestIdSortOrderChange = useCallback((order: SortOrder) => {
+    setContestIdSortOrder(order);
+  }, []);
+  const handleDifficultySortOrderChange = useCallback((order: SortOrder) => {
+    setDifficultySortOrder(order);
   }, []);
 
   // カテゴリごとにTab生成
@@ -41,6 +52,7 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
       key: category,
       children: (
         <SearchResultTabPanel
+          key={category}
           problems={problemsInCategory}
           isCustomOpened={isCustomOpened}
           handleCustomOpenedChange={handleCustomOpenedChange}
@@ -48,6 +60,10 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
           handleDifficultyHiddenChange={handleDifficultyHiddenChange}
           difficultyRange={difficultyRange}
           handleDifficultyRangeChange={handleDifficultyRangeChange}
+          contestIdSortOrder={contestIdSortOrder}
+          handleContestIdSortOrderChange={handleContestIdSortOrderChange}
+          difficultySortOrder={difficultySortOrder}
+          handleDifficultySortOrderChange={handleDifficultySortOrderChange}
         />
       ),
     };
