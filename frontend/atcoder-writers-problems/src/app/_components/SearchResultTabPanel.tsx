@@ -1,4 +1,5 @@
 import { ColumnTitleWithSorter } from '@/components/ColumnTitleWithSorter';
+import type { UpdateRangeHandler } from '@/hooks/Range';
 import type { SortOrderHandlers } from '@/hooks/sortOrder';
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
@@ -33,7 +34,7 @@ export type SearchResultTabPanelProps = {
   isDifficultyHidden: boolean;
   handleDifficultyHiddenChange: (hidden: boolean) => void;
   difficultyRange: [number, number];
-  handleDifficultyRangeChange: (newRange: number[]) => void;
+  updateDifficultyRange: UpdateRangeHandler;
   contestIdSortOrder: SortOrder;
   contestIdSortOrderHandlers: SortOrderHandlers;
   difficultySortOrder: SortOrder;
@@ -107,7 +108,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   isDifficultyHidden,
   handleDifficultyHiddenChange,
   difficultyRange,
-  handleDifficultyRangeChange,
+  updateDifficultyRange,
   contestIdSortOrder,
   contestIdSortOrderHandlers,
   difficultySortOrder,
@@ -241,7 +242,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         isDifficultyHidden={isDifficultyHidden}
         handleDifficultyHiddenChange={handleDifficultyHiddenChange}
         difficultyRange={difficultyRange}
-        handleDifficultyRangeChange={handleDifficultyRangeChange}
+        updateDifficultyRange={updateDifficultyRange}
       />
     ),
     [isCustomOpened, isDifficultyHidden, difficultyRange],
@@ -258,7 +259,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         }}
         className='max-w-xl'
         rowClassName={rowClassName}
-        title={()=>tableCustom}
+        title={() => tableCustom}
         style={{ minHeight: '100vh' }}
       />
     </Flex>

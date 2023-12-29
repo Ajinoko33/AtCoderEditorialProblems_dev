@@ -1,3 +1,4 @@
+import { useRange } from '@/hooks/Range';
 import { useSortOrder } from '@/hooks/sortOrder';
 import { categories, type Problem } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
@@ -12,7 +13,7 @@ export type SearchResultProps = {
 export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   const [isCustomOpened, setIsCustomOpened] = useState<boolean>(false);
   const [isDifficultyHidden, setIsDifficultyHidden] = useState<boolean>(false);
-  const [difficultyRange, setDifficultyRange] = useState<[number, number]>([
+  const [difficultyRange, updateDifficultyRange] = useRange([
     MIN_DIFFICULTY_RANGE,
     MAX_DIFFICULTY_RANGE,
   ]);
@@ -25,9 +26,6 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
   }, []);
   const handleDifficultyHiddenChange = useCallback((hidden: boolean) => {
     setIsDifficultyHidden(hidden);
-  }, []);
-  const handleDifficultyRangeChange = useCallback((value: number[]) => {
-    setDifficultyRange([value[0], value[1]]);
   }, []);
 
   // カテゴリごとにTab生成
@@ -52,7 +50,7 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
           isDifficultyHidden={isDifficultyHidden}
           handleDifficultyHiddenChange={handleDifficultyHiddenChange}
           difficultyRange={difficultyRange}
-          handleDifficultyRangeChange={handleDifficultyRangeChange}
+          updateDifficultyRange={updateDifficultyRange}
           contestIdSortOrder={contestIdSortOrder}
           contestIdSortOrderHandlers={contestIdSortOrderHandlers}
           difficultySortOrder={difficultySortOrder}
