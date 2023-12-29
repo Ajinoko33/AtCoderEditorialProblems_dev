@@ -114,27 +114,26 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   difficultySortOrder,
   difficultySortOrderHandlers,
 }) => {
-  const [first, last] = difficultyRange;
+  // diff範囲フィルターを取得した問題にかける
+  const data: DataType[] = useMemo(() => {
+    const [first, last] = difficultyRange;
+    return problems
+      .filter(({ difficulty }) => {
+        if (difficulty === undefined) {
+          return (
+            first === MIN_DIFFICULTY_RANGE && last === MAX_DIFFICULTY_RANGE
+          );
+        } else {
+          return first <= difficulty && difficulty <= last;
+        }
+      })
+      .map((problem, idx) => ({
+        ...problem,
+        key: idx.toString(),
+      }));
+  }, [problems, difficultyRange]);
 
-  const data: DataType[] = useMemo(
-    () =>
-      problems
-        .filter(({ difficulty }) => {
-          if (difficulty === undefined) {
-            return (
-              first === MIN_DIFFICULTY_RANGE && last === MAX_DIFFICULTY_RANGE
-            );
-          } else {
-            return first <= difficulty && difficulty <= last;
-          }
-        })
-        .map((problem, idx) => ({
-          ...problem,
-          key: idx.toString(),
-        })),
-    [problems, difficultyRange],
-  );
-
+  // diff表示/非表示設定をテーブルに反映
   const columns = useMemo(
     () =>
       baseColumns
