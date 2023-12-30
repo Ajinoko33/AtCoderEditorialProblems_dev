@@ -1,1 +1,1 @@
-# AtCoderWritersProblems
+# AtCoderEditorialProblems
