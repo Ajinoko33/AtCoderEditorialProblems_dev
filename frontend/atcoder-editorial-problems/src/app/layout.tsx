@@ -1,4 +1,5 @@
 import { MainContainer } from '@/components/MainContainer';
+import StyledComponentsRegistry from '@/lib/AntdRegistry';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Header } from './_components/Header';
@@ -19,8 +20,10 @@ export default function RootLayout({
   return (
     <html lang='ja'>
       <body className={inter.className}>
-        <Header />
-        <MainContainer>{children}</MainContainer>
+        <StyledComponentsRegistry>
+          <Header />
+          <MainContainer>{children}</MainContainer>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

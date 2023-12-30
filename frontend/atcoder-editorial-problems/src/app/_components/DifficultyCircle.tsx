@@ -29,7 +29,7 @@ export const DifficultyCircle: FC<DifficultyCircleProps> = ({ difficulty }) => {
         <Tooltip title='Difficulty is unavailable.'>
           <Badge
             size='small'
-            count={<QuestionCircleFilled className='text-cyan-400' />}
+            count={<QuestionCircleFilled style={{ color: '#22d3ee' }} />}
           />
         </Tooltip>
       </span>
