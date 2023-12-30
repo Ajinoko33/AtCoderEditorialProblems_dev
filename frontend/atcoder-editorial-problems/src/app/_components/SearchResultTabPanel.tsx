@@ -169,11 +169,11 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   const onClickContestIdSorter = useCallback(() => {
     contestIdSorterHandlers._switch();
     difficultySorterHandlers.disable();
-  }, []);
+  }, [contestIdSorterHandlers, difficultySorterHandlers]);
   const onClickDifficultySorter = useCallback(() => {
     difficultySorterHandlers._switch();
     contestIdSorterHandlers.disable();
-  }, []);
+  }, [contestIdSorterHandlers, difficultySorterHandlers]);
 
   const columnsWithSortOrder = useMemo(
     () =>
@@ -227,7 +227,13 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
               return column;
           }
         }),
-    [columns, contestIdSorter, difficultySorter],
+    [
+      columns,
+      contestIdSorter,
+      difficultySorter,
+      onClickContestIdSorter,
+      onClickDifficultySorter,
+    ],
   );
 
   const tableCustom = useMemo(
@@ -241,7 +247,14 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         updateDifficultyRange={updateDifficultyRange}
       />
     ),
-    [isCustomOpened, isDifficultyHidden, difficultyRange],
+    [
+      isCustomOpened,
+      isDifficultyHidden,
+      difficultyRange,
+      handleCustomOpenedChange,
+      handleDifficultyHiddenChange,
+      updateDifficultyRange,
+    ],
   );
 
   return (

@@ -67,7 +67,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
         .then(() => {
           setIsLoadingWriters(false);
         });
-    }, [retryTrigger]);
+    }, [retryTrigger, handleLoadingWritersErrorChange]);
 
     // submit
     const onFinish: FormProps<FieldType>['onFinish'] = useCallback(
@@ -100,7 +100,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
             setIsSearching(false);
           });
       },
-      [],
+      [handleProblemsChange, handleSearchingErrorChange],
     );
 
     return (
@@ -148,3 +148,5 @@ export const SearchForm: FC<SearchFormProps> = memo(
     );
   },
 );
+
+SearchForm.displayName = 'SearchForm';

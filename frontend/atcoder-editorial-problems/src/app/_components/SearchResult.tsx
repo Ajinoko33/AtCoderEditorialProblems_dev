@@ -60,3 +60,5 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
 
   return <Tabs items={items} tabBarGutter={18} size='middle' centered />;
 });
+
+SearchResult.displayName = 'SearchResult';
