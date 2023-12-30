@@ -131,7 +131,7 @@ export const SearchForm: FC<SearchFormProps> = memo(
             }
           />
         </Form.Item>
-        <Form.Item<FieldType> label='User ID' name='user'>
+        <Form.Item<FieldType> label='Your User ID' name='user'>
           <Input />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { LinkToOutside } from '@/components';
-import { Typography } from 'antd';
+import { Divider, Typography } from 'antd';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -19,6 +19,23 @@ export default function Page() {
       <Paragraph>
         自分好みの筆者の解説がある問題を選んで解くことができます!!
       </Paragraph>
+
+      <Divider />
+
+      {/* ======== 使い方 ============================================= */}
+      <Title>使い方</Title>
+      <Paragraph>
+        問題検索ページで、筆者(Writer)を選択して「Search」ボタンを押すと、下に検索結果が表示されます。
+      </Paragraph>
+      <Paragraph>
+        オプションであなたのAtCoderでのユーザID(Your User
+        ID)も一緒に入力すると、検索結果にあなたの問題への取り組み状況が反映されます。
+      </Paragraph>
+      <Paragraph>
+        検索結果の問題タイトルをクリックすると、その問題のページが開きます。
+      </Paragraph>
+
+      <Divider />
 
       {/* ======== Q&A ============================================= */}
       <Title>Q&A</Title>
@@ -61,6 +78,8 @@ export default function Page() {
         毎週水曜4:00にその週のコンテスト情報を収集しています。収集にはAtCoder
         ProblemsのAPIを使用しているため、そちらの反映がされていなければAEPでも反映されません。取りこぼした問題のために、不定期でより遡った情報収集をしています。
       </Paragraph>
+
+      <Divider />
 
       {/* ======== 管理者 ============================================= */}
       <Title>管理者</Title>
