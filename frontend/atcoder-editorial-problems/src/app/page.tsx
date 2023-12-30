@@ -1,6 +1,5 @@
 'use client';
 
-import { problemsData } from '@/data/mockData';
 import { useTrigger } from '@/hooks';
 import type { Problem } from '@/types';
 import { Alert, Flex } from 'antd';
@@ -9,7 +8,7 @@ import { SearchForm } from './_components/SearchForm';
 import { SearchResult } from './_components/SearchResult';
 
 export default function Home() {
-  const [problems, setProblems] = useState<Problem[]>(problemsData);
+  const [problems, setProblems] = useState<Problem[]>([]);
   const [hasLoadingWritersError, setHasLoadingWritersError] =
     useState<boolean>(false);
   const [hasSearchingError, setHasSearchingError] = useState<boolean>(false);
