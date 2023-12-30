@@ -7,7 +7,6 @@ import {
 import { Menu, type MenuProps } from 'antd';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
-import { useState } from 'react';
 
 const items: MenuProps['items'] = [
   {
@@ -44,20 +43,13 @@ const items: MenuProps['items'] = [
 ];
 
 export const HeaderMenu = () => {
-  const defaultSelectedKey = useSelectedLayoutSegment() ?? 'top';
-
-  const [selectedKey, setSelectedKey] = useState(defaultSelectedKey);
-
-  const onClick: MenuProps['onClick'] = ({ key }) => {
-    setSelectedKey(key);
-  };
+  const selectedMenuKey = useSelectedLayoutSegment() ?? 'top';
 
   return (
     <Menu
       mode='horizontal'
       items={items}
-      selectedKeys={[selectedKey]}
-      onClick={onClick}
+      selectedKeys={[selectedMenuKey]}
       className='bg-transparent border-0'
     />
   );
