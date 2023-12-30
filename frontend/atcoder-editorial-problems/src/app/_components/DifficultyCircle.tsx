@@ -1,7 +1,4 @@
-import {
-  TopcoderLikeCircle,
-  getRatingColor,
-} from '@/components/external/AtCoderProblems';
+import { TopcoderLikeCircle, getRatingColor } from '@/components';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { Badge, Tooltip } from 'antd';
 import type { FC } from 'react';

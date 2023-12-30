@@ -1,8 +1,5 @@
-import type {
-  RatingColor,
-  RatingMetalColor,
-} from '@/components/external/AtCoderProblems';
-import type { Range, UpdateRangeHandler } from '@/hooks/Range';
+import type { RatingColor, RatingMetalColor } from '@/components';
+import type { Range, UpdateRangeHandler } from '@/hooks';
 import { SettingOutlined } from '@ant-design/icons';
 import {
   Collapse,

@@ -1,4 +1,4 @@
-import { LinkToOutside } from '@/components/LinkToOutside';
+import { LinkToOutside } from '@/components';
 import {
   FileSearchOutlined,
   LinkOutlined,

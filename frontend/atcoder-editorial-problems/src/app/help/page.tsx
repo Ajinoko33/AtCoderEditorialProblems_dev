@@ -1,6 +1,6 @@
 'use client';
 
-import { LinkToOutside } from '@/components/LinkToOutside';
+import { LinkToOutside } from '@/components';
 import { Typography } from 'antd';
 
 const { Title, Paragraph, Text } = Typography;

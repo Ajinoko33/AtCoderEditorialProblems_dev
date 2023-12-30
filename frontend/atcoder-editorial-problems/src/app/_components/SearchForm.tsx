@@ -1,4 +1,4 @@
-import { clipDifficulty } from '@/components/external/AtCoderProblems';
+import { clipDifficulty } from '@/components';
 import { axiosInstance } from '@/config/axios';
 import type { Problem, ProblemResponse } from '@/types';
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';

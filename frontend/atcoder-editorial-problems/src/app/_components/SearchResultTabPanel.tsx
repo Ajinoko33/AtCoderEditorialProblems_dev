@@ -1,7 +1,5 @@
-import { ColumnTitleWithSorter } from '@/components/ColumnTitleWithSorter';
-import { LinkToOutside } from '@/components/LinkToOutside';
-import type { UpdateRangeHandler } from '@/hooks/Range';
-import type { SortOrderHandlers } from '@/hooks/sortOrder';
+import { ColumnTitleWithSorter, LinkToOutside } from '@/components';
+import type { SorterHandlers, UpdateRangeHandler } from '@/hooks';
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
@@ -36,10 +34,10 @@ export type SearchResultTabPanelProps = {
   handleDifficultyHiddenChange: (hidden: boolean) => void;
   difficultyRange: [number, number];
   updateDifficultyRange: UpdateRangeHandler;
-  contestIdSortOrder: SortOrder;
-  contestIdSortOrderHandlers: SortOrderHandlers;
-  difficultySortOrder: SortOrder;
-  difficultySortOrderHandlers: SortOrderHandlers;
+  contestIdSorter: SortOrder;
+  contestIdSorterHandlers: SorterHandlers;
+  difficultySorter: SortOrder;
+  difficultySorterHandlers: SorterHandlers;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -110,10 +108,10 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   handleDifficultyHiddenChange,
   difficultyRange,
   updateDifficultyRange,
-  contestIdSortOrder,
-  contestIdSortOrderHandlers,
-  difficultySortOrder,
-  difficultySortOrderHandlers,
+  contestIdSorter,
+  contestIdSorterHandlers,
+  difficultySorter,
+  difficultySorterHandlers,
 }) => {
   // diff範囲フィルターを取得した問題にかける
   const data: DataType[] = useMemo(() => {
@@ -169,12 +167,12 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   );
 
   const onClickContestIdSorter = useCallback(() => {
-    contestIdSortOrderHandlers._switch();
-    difficultySortOrderHandlers.disable();
+    contestIdSorterHandlers._switch();
+    difficultySorterHandlers.disable();
   }, []);
   const onClickDifficultySorter = useCallback(() => {
-    difficultySortOrderHandlers._switch();
-    contestIdSortOrderHandlers.disable();
+    difficultySorterHandlers._switch();
+    contestIdSorterHandlers.disable();
   }, []);
 
   const columnsWithSortOrder = useMemo(
@@ -183,18 +181,18 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         .map((column) => {
           // ソート
           // コンテストIDとdiffのどちらか一方がnull
-          if (contestIdSortOrder !== null) {
+          if (contestIdSorter !== null) {
             if (column.key === 'ID') {
               return {
                 ...column,
-                sortOrder: contestIdSortOrder,
+                sortOrder: contestIdSorter,
               };
             }
-          } else if (difficultySortOrder !== null) {
+          } else if (difficultySorter !== null) {
             if (column.key === 'diff') {
               return {
                 ...column,
-                sortOrder: difficultySortOrder,
+                sortOrder: difficultySorter,
               };
             }
           }
@@ -209,7 +207,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
                 title: (
                   <ColumnTitleWithSorter
                     title={column.key}
-                    sortOrder={contestIdSortOrder}
+                    sortOrder={contestIdSorter}
                     onClick={onClickContestIdSorter}
                   />
                 ),
@@ -220,7 +218,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
                 title: (
                   <ColumnTitleWithSorter
                     title={column.key}
-                    sortOrder={difficultySortOrder}
+                    sortOrder={difficultySorter}
                     onClick={onClickDifficultySorter}
                   />
                 ),
@@ -229,7 +227,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
               return column;
           }
         }),
-    [columns, contestIdSortOrder, difficultySortOrder],
+    [columns, contestIdSorter, difficultySorter],
   );
 
   const tableCustom = useMemo(

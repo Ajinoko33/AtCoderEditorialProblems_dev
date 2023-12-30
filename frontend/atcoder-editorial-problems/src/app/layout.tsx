@@ -1,4 +1,4 @@
-import { MainContainer } from '@/components/MainContainer';
+import { MainContainer } from '@/components';
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';

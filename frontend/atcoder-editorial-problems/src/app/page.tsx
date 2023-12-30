@@ -1,7 +1,7 @@
 'use client';
 
 import { problemsData } from '@/data/mockData';
-import { useTrigger } from '@/hooks/Trigger';
+import { useTrigger } from '@/hooks';
 import type { Problem } from '@/types';
 import { Alert, Flex } from 'antd';
 import { useCallback, useState } from 'react';
