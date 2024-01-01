@@ -1,8 +1,8 @@
-import { useRange, useSorter } from '@/hooks';
+import { useActiveSorter, useRange } from '@/hooks';
 import { categories, type Problem } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
 import { memo, useCallback, useState, type FC } from 'react';
-import { SearchResultTabPanel } from './SearchResultTabPanel';
+import { SearchResultTabPanel, sortableColumn } from './SearchResultTabPanel';
 import { MAX_DIFFICULTY_RANGE, MIN_DIFFICULTY_RANGE } from './TableCustom';
 
 export type SearchResultProps = {
@@ -16,8 +16,8 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
     MIN_DIFFICULTY_RANGE,
     MAX_DIFFICULTY_RANGE,
   ]);
-  const [contestIdSorter, contestIdSorterHandlers] = useSorter('descend');
-  const [difficultySorter, difficultySorterHandlers] = useSorter(null);
+  const [activeSorter, sortOrder, activateSorter] =
+    useActiveSorter<sortableColumn>('ID', 'descend');
 
   const handleCustomOpenedChange = useCallback((opened: boolean) => {
     setIsCustomOpened(opened);
@@ -49,10 +49,9 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
           handleDifficultyHiddenChange={handleDifficultyHiddenChange}
           difficultyRange={difficultyRange}
           updateDifficultyRange={updateDifficultyRange}
-          contestIdSorter={contestIdSorter}
-          contestIdSorterHandlers={contestIdSorterHandlers}
-          difficultySorter={difficultySorter}
-          difficultySorterHandlers={difficultySorterHandlers}
+          activeSorter={activeSorter}
+          sortOrder={sortOrder}
+          activateSorter={activateSorter}
         />
       ),
     };

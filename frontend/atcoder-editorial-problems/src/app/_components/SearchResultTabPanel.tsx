@@ -1,5 +1,5 @@
 import { ColumnTitleWithSorter, LinkToOutside } from '@/components';
-import type { SorterHandlers, UpdateRangeHandler } from '@/hooks';
+import type { ActiveSorterHandler, UpdateRangeHandler } from '@/hooks';
 import type { Problem, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
@@ -26,6 +26,7 @@ const problemIndexOrders = {
   Ex: 81,
 };
 
+export type sortableColumn = 'ID' | 'diff';
 export type SearchResultTabPanelProps = {
   problems: Problem[];
   isCustomOpened: boolean;
@@ -34,10 +35,9 @@ export type SearchResultTabPanelProps = {
   handleDifficultyHiddenChange: (hidden: boolean) => void;
   difficultyRange: [number, number];
   updateDifficultyRange: UpdateRangeHandler;
-  contestIdSorter: SortOrder;
-  contestIdSorterHandlers: SorterHandlers;
-  difficultySorter: SortOrder;
-  difficultySorterHandlers: SorterHandlers;
+  activeSorter: sortableColumn;
+  sortOrder: SortOrder;
+  activateSorter: ActiveSorterHandler<sortableColumn>;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -52,6 +52,7 @@ interface DataType {
   startEpochSecond: number;
   resultCode: ResultCode;
   problemIndex: ProblemIndex;
+  order: number;
 }
 
 const baseColumns: ColumnsType<DataType> = [
@@ -60,12 +61,9 @@ const baseColumns: ColumnsType<DataType> = [
     dataIndex: 'contest',
     key: 'ID',
     width: 110,
-    sorter: (a, b) =>
-      a.startEpochSecond - b.startEpochSecond ||
-      getProblemIndexOrder(a.problemIndex) -
-        getProblemIndexOrder(b.problemIndex),
     sortDirections: [],
-    // defaultSortOrder: 動的に設定
+    defaultSortOrder: 'ascend',
+    sorter: (a, b) => a.order - b.order, // ソート済みのものをorderに従って表示
     showSorterTooltip: false,
     render: (text, record) => `${record.contest} - ${record.problemIndex}`,
   },
@@ -81,9 +79,6 @@ const baseColumns: ColumnsType<DataType> = [
     dataIndex: 'difficulty',
     key: 'diff',
     width: 80,
-    sorter: (a, b) => (a.difficulty || -DIFF_INF) - (b.difficulty || -DIFF_INF),
-    sortDirections: [],
-    // defaultSortOrder: 動的に設定
     showSorterTooltip: false,
     render: (text) => text || '-',
   },
@@ -100,6 +95,51 @@ const rowClassName: TableProps<DataType>['rowClassName'] = (record) => {
   }
 };
 
+const sort = (
+  data: DataType[],
+  activeSorter: sortableColumn,
+  sortOrder: SortOrder,
+) => {
+  let res = data;
+  switch (activeSorter) {
+    case 'ID':
+      res.sort(
+        (a, b) =>
+          a.startEpochSecond - b.startEpochSecond ||
+          getProblemIndexOrder(a.problemIndex) -
+            getProblemIndexOrder(b.problemIndex),
+      );
+      break;
+    case 'diff':
+      res.sort(
+        (a, b) => (a.difficulty || -DIFF_INF) - (b.difficulty || -DIFF_INF),
+      );
+      break;
+  }
+  if (sortOrder === 'descend') {
+    res.reverse();
+  }
+
+  return res.map((datum, idx) => ({
+    ...datum,
+    order: idx,
+  }));
+};
+
+const filterByDifficulty = (
+  data: DataType[],
+  difficultyRange: [number, number],
+) => {
+  const [first, last] = difficultyRange;
+  return data.filter(({ difficulty }) => {
+    if (difficulty === undefined) {
+      return first === MIN_DIFFICULTY_RANGE && last === MAX_DIFFICULTY_RANGE;
+    } else {
+      return first <= difficulty && difficulty <= last;
+    }
+  });
+};
+
 export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   problems,
   isCustomOpened,
@@ -108,29 +148,33 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   handleDifficultyHiddenChange,
   difficultyRange,
   updateDifficultyRange,
-  contestIdSorter,
-  contestIdSorterHandlers,
-  difficultySorter,
-  difficultySorterHandlers,
+  activeSorter,
+  sortOrder,
+  activateSorter,
 }) => {
-  // diff範囲フィルターを取得した問題にかける
-  const data: DataType[] = useMemo(() => {
-    const [first, last] = difficultyRange;
-    return problems
-      .filter(({ difficulty }) => {
-        if (difficulty === undefined) {
-          return (
-            first === MIN_DIFFICULTY_RANGE && last === MAX_DIFFICULTY_RANGE
-          );
-        } else {
-          return first <= difficulty && difficulty <= last;
-        }
-      })
-      .map((problem, idx) => ({
+  const data: DataType[] = useMemo(
+    () =>
+      problems.map((problem, idx) => ({
         ...problem,
         key: idx.toString(),
-      }));
-  }, [problems, difficultyRange]);
+        order: idx, // ソート時に変更
+      })),
+    [problems],
+  );
+
+  // ソート
+  // diff非表示時はdiff列が表示されず表のsorterが使えないので、
+  // 内部で順序づけしておいたものを表示する
+  const sortedData = useMemo(
+    () => sort(data, activeSorter, sortOrder),
+    [data, activeSorter, sortOrder],
+  );
+
+  // 表示する問題を絞り込む
+  const fileterdSortedData: DataType[] = useMemo(
+    () => filterByDifficulty(sortedData, difficultyRange),
+    [sortedData, difficultyRange],
+  );
 
   // diff表示/非表示設定をテーブルに反映
   const columns = useMemo(
@@ -166,71 +210,51 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
     [isDifficultyHidden],
   );
 
-  const onClickContestIdSorter = useCallback(() => {
-    contestIdSorterHandlers._switch();
-    difficultySorterHandlers.disable();
-  }, [contestIdSorterHandlers, difficultySorterHandlers]);
-  const onClickDifficultySorter = useCallback(() => {
-    difficultySorterHandlers._switch();
-    contestIdSorterHandlers.disable();
-  }, [contestIdSorterHandlers, difficultySorterHandlers]);
+  const onClickContestIdSorter = useCallback(
+    () => activateSorter('ID'),
+    [activateSorter],
+  );
 
+  const onClickDifficultySorter = useCallback(
+    () => activateSorter('diff'),
+    [activateSorter],
+  );
+
+  // 列タイトルの表示をソート状態と同期
   const columnsWithSortOrder = useMemo(
     () =>
-      columns
-        .map((column) => {
-          // ソート
-          // コンテストIDとdiffのどちらか一方がnull
-          if (contestIdSorter !== null) {
-            if (column.key === 'ID') {
-              return {
-                ...column,
-                sortOrder: contestIdSorter,
-              };
-            }
-          } else if (difficultySorter !== null) {
-            if (column.key === 'diff') {
-              return {
-                ...column,
-                sortOrder: difficultySorter,
-              };
-            }
-          }
-          return column;
-        })
-        .map((column) => {
-          // タイトルの表示を同期
-          switch (column.key) {
-            case 'ID':
-              return {
-                ...column,
-                title: (
-                  <ColumnTitleWithSorter
-                    title={column.key}
-                    sortOrder={contestIdSorter}
-                    onClick={onClickContestIdSorter}
-                  />
-                ),
-              };
-            case 'diff':
-              return {
-                ...column,
-                title: (
-                  <ColumnTitleWithSorter
-                    title={column.key}
-                    sortOrder={difficultySorter}
-                    onClick={onClickDifficultySorter}
-                  />
-                ),
-              };
-            default:
-              return column;
-          }
-        }),
+      columns.map((column) => {
+        switch (column.key) {
+          case 'ID':
+            return {
+              ...column,
+              title: (
+                <ColumnTitleWithSorter
+                  title={column.key}
+                  sortOrder={activeSorter === 'ID' ? sortOrder : null}
+                  onClick={onClickContestIdSorter}
+                />
+              ),
+            };
+          case 'diff':
+            return {
+              ...column,
+              title: (
+                <ColumnTitleWithSorter
+                  title={column.key}
+                  sortOrder={activeSorter === 'diff' ? sortOrder : null}
+                  onClick={onClickDifficultySorter}
+                />
+              ),
+            };
+          default:
+            return column;
+        }
+      }),
     [
       columns,
-      contestIdSorter,
-      difficultySorter,
+      activeSorter,
+      sortOrder,
       onClickContestIdSorter,
       onClickDifficultySorter,
     ],
@@ -261,7 +285,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
     <Flex vertical>
       <Table
         columns={columnsWithSortOrder}
-        dataSource={data}
+        dataSource={fileterdSortedData}
         pagination={{
           position: [],
           pageSize: 1000,
