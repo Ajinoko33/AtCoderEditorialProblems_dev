@@ -57,7 +57,7 @@ interface DataType {
 
 const baseColumns: ColumnsType<DataType> = [
   {
-    // title: 'ID', keyより生成
+    // title: 動的に設定
     dataIndex: 'contest',
     key: 'ID',
     width: 110,
@@ -75,7 +75,7 @@ const baseColumns: ColumnsType<DataType> = [
     // render: 動的に設定
   },
   {
-    // title: 'diff', keyより生成
+    // title: 動的に設定
     dataIndex: 'difficulty',
     key: 'diff',
     width: 80,
