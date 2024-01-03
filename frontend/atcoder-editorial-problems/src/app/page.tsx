@@ -32,7 +32,7 @@ export default function Home() {
             <Alert
               message={
                 <>
-                  {'Failed to loading wirters. '}
+                  Failed to load wirters.{' '}
                   <span
                     className='text-[#1677FF] cursor-pointer hover:text-[#69B1FF] transition-colors duration-300'
                     onClick={retry}
@@ -47,7 +47,7 @@ export default function Home() {
           )}
           {hasSearchingError && (
             <Alert
-              message={'Failed to searching problems.'}
+              message={'Failed to search problems.'}
               type='error'
               showIcon
             />
