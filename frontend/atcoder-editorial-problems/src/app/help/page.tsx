@@ -83,12 +83,12 @@ export default function Page() {
 
       {/* ======== 管理者 ============================================= */}
       <Title>管理者</Title>
-      <Paragraph>要望やバグ報告などありましたら、ご連絡ください。</Paragraph>
+      <Paragraph>要望やバグなどありましたら、ご連絡ください。</Paragraph>
       <Paragraph>
         Ajinoko
         <ul>
           <li>
-            X(Twitter):{' '}
+            𝕏(Twitter):{' '}
             <LinkToOutside
               href='https://twitter.com/Ajinoko33'
               iconSize='small'
