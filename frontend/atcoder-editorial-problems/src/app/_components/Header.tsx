@@ -1,18 +1,22 @@
-'use client';
-
+import { Layout } from 'antd';
 import { HeaderMain } from './HeaderMain';
 import { HeaderMenu } from './HeaderMenu';
 
 export const Header = () => {
-  // TODO:レスポンシブで，画面幅が一定以下ではMenuをハンバーガーに．
+  const style = {
+    background: 'transparent',
+    display: 'flex',
+    alignItems: 'center',
+    borderBottomColor: '#0505050F',
+    borderBottomWidth: '2px',
+    height: '3rem',
+    padding: '0 2rem',
+  };
+
   return (
-    <nav className='flex items-center px-4 border-b-[#0505050F] border-b-2'>
-      <div className='flex-none mr-4'>
-        <HeaderMain />
-      </div>
-      <div className='flex-auto'>
-        <HeaderMenu />
-      </div>
-    </nav>
+    <Layout.Header style={style}>
+      <HeaderMain />
+      <HeaderMenu />
+    </Layout.Header>
   );
 };

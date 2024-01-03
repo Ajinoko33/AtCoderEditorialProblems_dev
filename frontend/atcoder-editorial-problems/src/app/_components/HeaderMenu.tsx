@@ -45,12 +45,15 @@ const items: MenuProps['items'] = [
 export const HeaderMenu = () => {
   const selectedMenuKey = useSelectedLayoutSegment() ?? 'top';
 
+  const style = { flex: 1, minWidth: 0 };
+
   return (
     <Menu
       mode='horizontal'
       items={items}
       selectedKeys={[selectedMenuKey]}
       className='bg-transparent border-0'
+      style={style}
     />
   );
 };
