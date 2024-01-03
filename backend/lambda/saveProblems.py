@@ -1,5 +1,4 @@
 import os
-import textwrap
 
 import psycopg2
 
@@ -7,7 +6,7 @@ import psycopg2
 CONN_INFO = f"host={os.environ['HOST']} port={os.environ['PORT']} dbname={os.environ['DBNAME']} user={os.environ['USER']} password={os.environ['PASSWORD']}"
 
 def upsert_into_contests(contests, cur):
-    if len(contests.keys()) == 0:
+    if len(contests) == 0:
         return
 
     # SQL作成
@@ -17,9 +16,9 @@ def upsert_into_contests(contests, cur):
     
     # テーブルへ登録
     data = []
-    for id, ses in contests.items():
-        data.append(id)
-        data.append(ses)
+    for contest in contests:
+        data.append(contest["id"])
+        data.append(contest["start_epoch_second"])
     cur.execute(sql, data)
 
     return
@@ -29,9 +28,8 @@ def upsert_into_problems(problems, cur):
         return
     
     # SQL作成
-    value_tmpl = "(%s, %s, %s, %s, %s, %s, %s)"
-    sql = "INSERT INTO problems (id, problem_index, name, title, difficulty, contest_id, writer) VALUES"
-    sql += ",".join([textwrap.dedent(value_tmpl)] * len(problems))
+    sql = "INSERT INTO problems (id, problem_index, name, title, difficulty, contest_id) VALUES"
+    sql += ",".join(["(%s, %s, %s, %s, %s, %s)"] * len(problems))
     sql += "ON CONFLICT (id) DO NOTHING;"
 
     # テーブルへ登録
@@ -43,19 +41,35 @@ def upsert_into_problems(problems, cur):
         data.append(problem["title"])
         data.append(problem["difficulty"] if "difficulty" in problem else None)
         data.append(problem["contest_id"])
-        data.append(problem["writer"])
     cur.execute(sql, data)
 
     return
 
-def insert_problems(problems):
-    # コンテストを洗い出す
-    contests = {}
-    for problem in problems:
-        if problem["contest_id"] not in contests:
-            contests[problem["contest_id"]] = problem["start_epoch_second"]
+def upsert_into_editorials(editorials, cur):
+    if len(editorials) == 0:
+        return
+    
+    # SQL作成
+    sql = "INSERT INTO editorials (problem_id, writer, is_official) VALUES"
+    sql += ",".join(["(%s, %s, %s)"] * len(editorials))
+    sql += "ON CONFLICT (problem_id, writer, is_official) DO NOTHING;"
 
-    # 登録処理
+    # テーブルへの登録
+    data = []
+    for editorial in editorials:
+        data.append(editorial["problem_id"])
+        data.append(editorial["writer"])
+        data.append(editorial["is_official"])
+    cur.execute(sql, data)
+
+    return
+
+def lambda_handler(event, context):
+    contests = event["contests"]
+    problems = event["problems"]
+    editorials = event["editorials"]
+
+    # 格納
     with psycopg2.connect(CONN_INFO) as conn:
         with conn.cursor() as cur:
             # コンテストテーブルへ登録
@@ -64,10 +78,7 @@ def insert_problems(problems):
             # 問題テーブルへ登録
             upsert_into_problems(problems, cur)
 
-    return
-
-def lambda_handler(event, context):
-    # 格納
-    insert_problems(event)
+            # 解説テーブルへ登録
+            upsert_into_editorials(editorials, cur)
 
     return 

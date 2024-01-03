@@ -16,6 +16,10 @@ EDITORIAL_URL_TEMPLATE = Template("https://atcoder.jp/contests/${contest_id}/edi
 TARGET_CONTEST = ["abc", "arc"]
 # 1年間の長さ(秒)
 ONE_YEAR_EPOCH_SECOND = 365 * 24 * 60 * 60
+# サーバと接続を確立するまでの待機時間(秒)
+CONNECT_TIMEOUT = 3.5
+# サーバがレスポンスを返すまでの待機時間
+READ_TIMEOUT = 3.5
 
 CLIENT = boto3.client("lambda")
 
@@ -56,10 +60,10 @@ def validate(event):
             "to_epoch_second": now
         }
 
-def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
+def collect_contests(from_epoch_second, to_epoch_second):
     # APIからコンテスト開始時刻を取得
     url = API_URL + "/contests.json"
-    res = requests.get(url)
+    res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
 
     if res.status_code != 200:
         # HTTPリクエストエラー
@@ -67,23 +71,23 @@ def collect_contest_start_epoch_secs(from_epoch_second, to_epoch_second):
 
     contests = json.loads(res.text)
 
-    # 開始時刻が[from,to]にあるコンテストを抽出
-    target_contests = list(filter(lambda c: from_epoch_second <= c["start_epoch_second"] <= to_epoch_second, contests))
-    # 開始時刻を抽出
-    ret = {}
-    for contest in target_contests:
-        ret[contest["id"]] = contest["start_epoch_second"]
+    # 対象コンテストで、かつ開始時刻が[from,to]にあるコンテストを抽出
+    target_contests = list(filter(lambda c: c["id"][:3] in TARGET_CONTEST and from_epoch_second <= c["start_epoch_second"] <= to_epoch_second, contests))
+
+    ret = []
+    for target_contest in target_contests:
+        contest={
+            "id": target_contest["id"],
+            "start_epoch_second": target_contest["start_epoch_second"]
+        }
+        ret.append(contest)
 
     return ret
-    
-def extract_target_contests(contest_ids):
-    # 対象コンテストのIDを抽出
-    return list(filter(lambda contest_id: contest_id[:3] in TARGET_CONTEST, contest_ids))
 
-def collect_problems(contest_ids):
-    # APIから問題情報を取得
+def collect_problems_base(contest_ids):
+    # APIから問題情報取得
     url = API_URL + "/problems.json"
-    res = requests.get(url)
+    res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
 
     if res.status_code != 200:
         # HTTPリクエストエラー
@@ -99,7 +103,7 @@ def collect_problems(contest_ids):
 def collect_difficulty(problem_ids):
     # APIからdifficulty取得
     url = API_URL + "/problem-models.json"
-    res = requests.get(url)
+    res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
 
     if res.status_code != 200:
         # HTTPリクエストエラー
@@ -116,46 +120,88 @@ def collect_difficulty(problem_ids):
 
     return ret
 
-def collect_writers(contest_ids):
-    # AtCoder公式解説ページからWriter情報取得
-    ret = {}
+def unite_difficulties(problems, difficulties):
+    ret = []
+    for problem in problems:
+        united_problem = problem.copy()
+        if united_problem["id"] in difficulties:
+            united_problem["difficulty"] = difficulties[united_problem["id"]]
+        ret.append(united_problem)
+
+    return ret
+
+def collect_problems(contest_ids):
+    # APIから問題情報を取得
+    problems_base = collect_problems_base(contest_ids)
+
+    # APIからdifficulty情報取得
+    problem_ids = [p["id"] for p in problems_base]
+    difficulties = collect_difficulty(problem_ids)
+
+    # 問題情報にdifficulty情報を付加
+    ret = unite_difficulties(problems_base, difficulties)
+
+    return ret
+
+def collect_editorials(contest_ids):
+    # AtCoder解説タブから解説情報取得
+    ret = []
     for contest_id in contest_ids:
         # 解説一覧ページを取得し，パース
         url = EDITORIAL_URL_TEMPLATE.substitute(contest_id=contest_id)
-        text = requests.get(url).text
+        text = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT)).text
         soup = BeautifulSoup(text, "html.parser")
 
-        # 各問題のWriterを抽出
+        # 各問題の解説Writerを抽出
         h3s = soup.find_all("h3")
         for h3 in h3s:
             if h3.get_text() == "コンテスト全体の解説":
                 continue
-            # 問題URLの末尾から問題IDを抽出
-            problem_id = h3.a["href"].split("/")[-1]
-            # Writer名を抽出
-            writer = h3.next_sibling.next_sibling.li.find_all("a")[1].span.get_text()
-            ret[problem_id] = writer
+            
+            # 問題IDを生成
+            # 問題へのURLから問題IDを取得できそうだが、
+            # 昔のABCではARCでの問題IDになってしまう
+            problem_id = contest_id + "_" + h3.get_text()[0].lower()
+            
+            next_tag = h3.next_sibling.next_sibling
+            if next_tag.name == "ul":
+                # 解説あり
+                official_writers = set()
+                user_writers = set()
+                for li in next_tag.find_all("li"):
+                    is_official = (li.find_all("span")[0].get_text() == "公式")
+                    writer = li.find_all("a")[1].span.get_text()
+                    if is_official:
+                        official_writers.add(writer)
+                    else:
+                        user_writers.add(writer)
+                
+                for writer in official_writers:
+                    ret.append({
+                        "problem_id": problem_id,
+                        "writer": writer,
+                        "is_official": True
+                    })
+                for writer in user_writers:
+                    ret.append({
+                        "problem_id": problem_id,
+                        "writer": writer,
+                        "is_official": False
+                    })
 
     return ret
 
-def unite_into_problems(problems, start_epoch_secs, difficulties, writers):
-    # 情報を問題ごとに整理
-    ret = copy.deepcopy(problems)
-    for problem in ret:
-        problem["start_epoch_second"] = start_epoch_secs[problem["contest_id"]]
-        problem["writer"] = writers[problem["id"]]
-        if problem["id"] in difficulties:
-            problem["difficulty"] = difficulties[problem["id"]]
-
-    return ret
-
-def invoke_save_lambda(problems):
+def invoke_save_lambda(contests, problems, editorials):
     # lambdaを非同期で呼び出して問題をDBに格納
     res = CLIENT.invoke(
         FunctionName="saveProblems",
         InvocationType="Event",
         LogType="Tail",
-        Payload=json.dumps(problems)
+        Payload=json.dumps({
+            "contests": contests,
+            "problems": problems,
+            "editorials": editorials
+        })
     )
 
     if res["StatusCode"] != 202:
@@ -170,29 +216,25 @@ def lambda_handler(event, context):
     # バリデーション
     filled_event = validate(event)
     
-    # APIからコンテスト開始時刻取得
-    start_epoch_secs = collect_contest_start_epoch_secs(filled_event["from_epoch_second"], filled_event["to_epoch_second"])
+    # コンテスト情報取得
+    contests = collect_contests(filled_event["from_epoch_second"], filled_event["to_epoch_second"])
 
-    # 対象コンテストのIDを抽出
-    contest_ids = extract_target_contests(start_epoch_secs.keys())
-    
-    # APIから問題情報取得
+    # 問題情報取得
+    contest_ids = [c["id"] for c in contests]
     problems = collect_problems(contest_ids)
 
-    # APIからdifficulty情報取得
-    problem_ids = [p["id"] for p in problems]
-    difficulties = collect_difficulty(problem_ids)
-
-    # AtCoder公式解説ページからWriter情報取得
-    writers = collect_writers(contest_ids)
-
-    # 情報を問題ごとに整理
-    united_problems = unite_into_problems(problems, start_epoch_secs, difficulties, writers)
+    # 解説情報取得
+    editorials = collect_editorials(contest_ids)
 
     # lambda呼び出し(非同期処理)
-    print("save problems:")
-    print(united_problems)
-    invoke_save_lambda(united_problems)
+    invoke_save_lambda(contests, problems, editorials)
+
+    print("saved contests:")
+    print(contests)
+    print("saved problems:")
+    print(problems)
+    print("saved editorials:")
+    print(editorials)
     
 
     return

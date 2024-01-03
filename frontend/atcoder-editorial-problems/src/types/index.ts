@@ -28,11 +28,17 @@ export type ProblemResponse = {
   start_epoch_second: number;
   result_code?: ResultCode;
   problem_index: ProblemIndex;
+  is_official: boolean;
 };
 
-type OmitProps = 'start_epoch_second' | 'result_code' | 'problem_index';
+type OmitProps =
+  | 'start_epoch_second'
+  | 'result_code'
+  | 'problem_index'
+  | 'is_official';
 export type Problem = Omit<ProblemResponse, OmitProps> & {
   startEpochSecond: number;
   resultCode: ResultCode;
   problemIndex: ProblemIndex;
+  isOfficial: boolean;
 };

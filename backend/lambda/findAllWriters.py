@@ -12,11 +12,11 @@ def find_all_writers():
     # 全件取得
     sql = """\
         SELECT DISTINCT
-            p.writer
+            e.writer
         FROM
-            problems p
+            editorials e
         ORDER BY
-            p.writer;"""
+            e.writer;"""
     
     res = []
     with psycopg2.connect(CONN_INFO) as conn:

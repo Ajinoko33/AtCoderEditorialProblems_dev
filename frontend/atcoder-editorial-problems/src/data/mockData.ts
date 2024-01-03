@@ -38,6 +38,7 @@ export const problemsData: Problem[] = Array(50)
       startEpochSecond: 111222333 + Math.floor(idx / 5),
       problemIndex: problemIndexs[idx % 5],
       resultCode: resulteCodes[idx % 3],
+      isOfficial: idx % 2 == 0,
     };
     return problem;
   });

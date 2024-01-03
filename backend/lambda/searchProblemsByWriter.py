@@ -15,15 +15,20 @@ def find_problems_by_writer(writer):
             p.name,
             p.difficulty,
             p.problem_index,
-            c.start_epoch_second
+            c.start_epoch_second,
+            e.is_official
         FROM
+            editorials e
+        INNER JOIN
             problems p
+        ON
+            e.problem_id = p.id
         INNER JOIN
             contests c
         ON
             p.contest_id = c.id
         WHERE
-            p.writer = %s;"""
+            e.writer = %s;"""
     data = (writer,)
 
     res = []
@@ -44,7 +49,8 @@ def make_response(data):
             "difficulty" : row["difficulty"],
             "id" : row["id"],
             "start_epoch_second" : row["start_epoch_second"],
-            "problem_index" : row["problem_index"]
+            "problem_index" : row["problem_index"],
+            "is_official" : row["is_official"]
         }
 
     return list(map(convert, data))
