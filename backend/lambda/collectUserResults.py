@@ -12,6 +12,10 @@ MAX_NUMS = 500
 SLEEP_TIME = 1
 # コンテストの正規表現パターン
 CONTEST_PATTERN = r"^(abc|arc|agc)\d{3}$"
+# サーバと接続を確立するまでの待機時間(秒)
+CONNECT_TIMEOUT = 3.5
+# サーバがレスポンスを返すまでの待機時間
+READ_TIMEOUT = 3.5
 
 def collect_all_submittions(user):
     # 提出を全件取得
@@ -33,7 +37,8 @@ def collect_all_submittions(user):
             res = requests.get(
                 API_URL,
                 headers=headers,
-                params=params
+                params=params,
+                timeout=(CONNECT_TIMEOUT, READ_TIMEOUT)
             )
             if res.status_code != 200:
                 # HTTPリクエストエラー
