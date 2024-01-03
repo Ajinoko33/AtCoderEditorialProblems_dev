@@ -28,6 +28,7 @@ const createProblemFromProblemResponse = (src: ProblemResponse): Problem => ({
   resultCode: src.result_code || 'Yet',
   problemIndex: src.problem_index,
   isOfficial: src.is_official,
+  isExperimental: src.is_experimental,
 });
 
 const validateMessages: FormProps['validateMessages'] = {

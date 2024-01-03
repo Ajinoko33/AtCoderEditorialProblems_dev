@@ -29,16 +29,19 @@ export type ProblemResponse = {
   result_code?: ResultCode;
   problem_index: ProblemIndex;
   is_official: boolean;
+  is_experimental: boolean;
 };
 
 type OmitProps =
   | 'start_epoch_second'
   | 'result_code'
   | 'problem_index'
-  | 'is_official';
+  | 'is_official'
+  | 'is_experimental';
 export type Problem = Omit<ProblemResponse, OmitProps> & {
   startEpochSecond: number;
   resultCode: ResultCode;
   problemIndex: ProblemIndex;
   isOfficial: boolean;
+  isExperimental: boolean;
 };

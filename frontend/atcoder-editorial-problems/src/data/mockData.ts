@@ -39,6 +39,7 @@ export const problemsData: Problem[] = Array(50)
       problemIndex: problemIndexs[idx % 5],
       resultCode: resulteCodes[idx % 3],
       isOfficial: idx % 2 == 0,
+      isExperimental: idx % 3 == 0,
     };
     return problem;
   });

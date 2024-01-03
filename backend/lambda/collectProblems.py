@@ -60,14 +60,19 @@ def validate(event):
             "to_epoch_second": now
         }
 
-def collect_contests(from_epoch_second, to_epoch_second):
-    # APIからコンテスト開始時刻を取得
-    url = API_URL + "/contests.json"
+def get_request(url):
     res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
 
     if res.status_code != 200:
         # HTTPリクエストエラー
         res.raise_for_status()
+    
+    return res
+
+def collect_contests(from_epoch_second, to_epoch_second):
+    # APIからコンテスト開始時刻を取得
+    url = API_URL + "/contests.json"
+    res = get_request(url)
 
     contests = json.loads(res.text)
 
@@ -84,39 +89,52 @@ def collect_contests(from_epoch_second, to_epoch_second):
 
     return ret
 
-def collect_problems_base(contest_ids):
+def collect_pairs(contest_ids):
+    # APIからコンテストと問題のペア情報取得
+    url = API_URL + "/contest-problem.json"
+    res = get_request(url)
+
+    pairs = json.loads(res.text)
+    
+    # 対象コンテストを抽出
+    ret = list(filter(lambda p: p["contest_id"] in contest_ids, pairs))
+
+    return ret
+
+def collect_problems_base(problem_ids):
     # APIから問題情報取得
     url = API_URL + "/problems.json"
-    res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
-
-    if res.status_code != 200:
-        # HTTPリクエストエラー
-        res.raise_for_status()
+    res = get_request(url)
 
     problems = json.loads(res.text)
 
-    # コンテストの問題を抽出
-    ret = list(filter(lambda p: p["contest_id"] in contest_ids, problems))
+    # 問題を抽出
+    ret = list(filter(lambda p: p["id"] in problem_ids, problems))
 
     return ret
 
 def collect_difficulty(problem_ids):
     # APIからdifficulty取得
     url = API_URL + "/problem-models.json"
-    res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
-
-    if res.status_code != 200:
-        # HTTPリクエストエラー
-        res.raise_for_status()
+    res = get_request(url)
 
     problem_models = json.loads(res.text)
 
     # 問題のdifficultyを抽出
     ret = {}
     for problem_id in problem_ids:
-        if problem_id not in problem_models or "difficulty" not in problem_models[problem_id]:
+        if problem_id not in problem_models:
             continue
-        ret[problem_id] = problem_models[problem_id]["difficulty"]
+
+        if "difficulty" in problem_models[problem_id]:
+            ret[problem_id] = {
+                "difficulty": problem_models[problem_id]["difficulty"],
+                "is_experimental": problem_models[problem_id]["is_experimental"]
+            }
+        else:
+            ret[problem_id] = {
+                "is_experimental": problem_models[problem_id]["is_experimental"]
+            }
 
     return ret
 
@@ -124,21 +142,22 @@ def unite_difficulties(problems, difficulties):
     ret = []
     for problem in problems:
         united_problem = problem.copy()
+        united_problem["is_experimental"] = False
         if united_problem["id"] in difficulties:
-            united_problem["difficulty"] = difficulties[united_problem["id"]]
+            united_problem = {**united_problem, **difficulties[united_problem["id"]]}
+        
         ret.append(united_problem)
 
     return ret
 
-def collect_problems(contest_ids):
+def collect_problems(problem_ids):
     # APIから問題情報を取得
-    problems_base = collect_problems_base(contest_ids)
+    problems_base = collect_problems_base(problem_ids)
 
     # APIからdifficulty情報取得
-    problem_ids = [p["id"] for p in problems_base]
     difficulties = collect_difficulty(problem_ids)
 
-    # 問題情報にdifficulty情報を付加
+    # 問題情報とdifficulty情報を整理
     ret = unite_difficulties(problems_base, difficulties)
 
     return ret
@@ -149,7 +168,7 @@ def collect_editorials(contest_ids):
     for contest_id in contest_ids:
         # 解説一覧ページを取得し，パース
         url = EDITORIAL_URL_TEMPLATE.substitute(contest_id=contest_id)
-        text = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT)).text
+        text = get_request(url).text
         soup = BeautifulSoup(text, "html.parser")
 
         # 各問題の解説Writerを抽出
@@ -158,10 +177,8 @@ def collect_editorials(contest_ids):
             if h3.get_text() == "コンテスト全体の解説":
                 continue
             
-            # 問題IDを生成
-            # 問題へのURLから問題IDを取得できそうだが、
-            # 昔のABCではARCでの問題IDになってしまう
-            problem_id = contest_id + "_" + h3.get_text()[0].lower()
+            # 問題URLの末尾から問題IDを抽出
+            problem_id = h3.a["href"].split("/")[-1]
             
             next_tag = h3.next_sibling.next_sibling
             if next_tag.name == "ul":
@@ -175,7 +192,7 @@ def collect_editorials(contest_ids):
                         official_writers.add(writer)
                     else:
                         user_writers.add(writer)
-                
+
                 for writer in official_writers:
                     ret.append({
                         "problem_id": problem_id,
@@ -191,7 +208,7 @@ def collect_editorials(contest_ids):
 
     return ret
 
-def invoke_save_lambda(contests, problems, editorials):
+def invoke_save_lambda(contests, problems, editorials, contests_problems):
     # lambdaを非同期で呼び出して問題をDBに格納
     res = CLIENT.invoke(
         FunctionName="saveProblems",
@@ -200,7 +217,8 @@ def invoke_save_lambda(contests, problems, editorials):
         Payload=json.dumps({
             "contests": contests,
             "problems": problems,
-            "editorials": editorials
+            "editorials": editorials,
+            "contests_problems": contests_problems
         })
     )
 
@@ -216,18 +234,22 @@ def lambda_handler(event, context):
     # バリデーション
     filled_event = validate(event)
     
-    # コンテスト情報取得
+    # 対象コンテスト取得
     contests = collect_contests(filled_event["from_epoch_second"], filled_event["to_epoch_second"])
 
-    # 問題情報取得
-    contest_ids = [c["id"] for c in contests]
-    problems = collect_problems(contest_ids)
+    # コンテストと問題IDのペア取得
+    contest_ids = [p["id"] for p in contests]
+    contests_problems = collect_pairs(contest_ids)
 
-    # 解説情報取得
+    # 問題IDより問題情報取得
+    problem_ids = set([p["problem_id"] for p in contests_problems])
+    problems = collect_problems(problem_ids)
+
+    # コンテストIDより解説情報取得
     editorials = collect_editorials(contest_ids)
 
     # lambda呼び出し(非同期処理)
-    invoke_save_lambda(contests, problems, editorials)
+    invoke_save_lambda(contests, problems, editorials, contests_problems)
 
     print("saved contests:")
     print(contests)
