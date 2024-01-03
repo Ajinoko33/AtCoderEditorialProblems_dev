@@ -45,13 +45,6 @@ export default function Page() {
         です。解説の筆者はその問題のWriterや原案者とは限りません。
       </Paragraph>
       <Paragraph>
-        このサービスは、各コンテストの解説タブをスクレイピングして筆者情報を収集しています。いろいろあって、
-        <Text strong>
-          現在は、各問題で最初に&quot;公式&quot;バッジが付いている解説の筆者
-        </Text>
-        のみを収集しています。（ユーザ解説も含め他の解説も取得できるよう改修予定です）
-      </Paragraph>
-      <Paragraph>
         なお、初期のコンテストで見られるPDFの解説はサポート対象外です。
       </Paragraph>
 
