@@ -50,13 +50,14 @@ def make_response(data):
     # 一つの問題に同一筆者が公式・ユーザ解説の両方を書いている場合があるため
     problems = {}
     for row in data:
-        id = row["id"]
+        key = row["contest_id"] + row["problem_index"]
         editorial_type = "official" if row["is_official"] else "user"
-        if id in problems:
-            problems[id]["editorial_types"].append(editorial_type)
+        if key in problems:
+            if editorial_type not in problems[key]["editorial_types"]:
+                problems[key]["editorial_types"].append(editorial_type)
         else:
-            problems[id] = {
-                "id" : id,
+            problems[key] = {
+                "id" : row["id"],
                 "contest" : row["contest_id"].upper(),
                 "category" : row["contest_id"][:3].upper(),
                 "name" : row["name"],
