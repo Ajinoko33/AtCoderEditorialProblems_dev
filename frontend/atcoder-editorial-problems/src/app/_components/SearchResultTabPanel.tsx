@@ -1,7 +1,8 @@
 import { ColumnTitleWithSorter, LinkToOutside } from '@/components';
+import { EditorialTypeBadge } from '@/components/EditorialTypeBadge';
 import type { ActiveSorterHandler, UpdateRangeHandler } from '@/hooks';
 import type { EditorialType, Problem, ProblemIndex, ResultCode } from '@/types';
-import { Badge, Flex, Space, Table } from 'antd';
+import { Flex, Space, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
 import type { SortOrder } from 'antd/es/table/interface';
 import { useCallback, useMemo, type FC } from 'react';
@@ -208,16 +209,9 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
                   </span>
                   <div className='flex-auto flex justify-end'>
                     <Space size='small'>
-                      {record.editorialTypes.includes('official') && (
-                        <Badge
-                          count='official'
-                          color='#00000040'
-                          size='small'
-                        />
-                      )}
-                      {record.editorialTypes.includes('user') && (
-                        <Badge count='user' color='#ffc069' size='small' />
-                      )}
+                      {record.editorialTypes.map((value, idx) => (
+                        <EditorialTypeBadge key={idx} editorialType={value} />
+                      ))}
                     </Space>
                   </div>
                 </div>
