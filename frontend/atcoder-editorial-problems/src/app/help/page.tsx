@@ -69,7 +69,7 @@ export default function Page() {
       <Title level={2}>直近のコンテストはいつ反映されますか？</Title>
       <Paragraph>
         毎週水曜4:00にその週のコンテスト情報を収集しています。収集にはAtCoder
-        ProblemsのAPIを使用しているため、そちらの反映がされていなければAEPでも反映されません。取りこぼした問題のために、不定期でより遡った情報収集をしています。
+        ProblemsのAPIを利用しているため、そちらの反映がされていなければAEPでも反映されません。取りこぼした問題のために、不定期でより遡った情報収集をしています。
       </Paragraph>
 
       <Divider />
