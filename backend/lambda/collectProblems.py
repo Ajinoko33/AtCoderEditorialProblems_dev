@@ -1,4 +1,4 @@
-import copy
+import time
 import datetime
 import json
 import math
@@ -13,12 +13,14 @@ API_URL = "https://kenkoooo.com/atcoder/resources"
 # AtCoder解説一覧ページURLテンプレート
 EDITORIAL_URL_TEMPLATE = Template("https://atcoder.jp/contests/${contest_id}/editorial?editorialLang=ja&lang=ja")
 # 抽出対象のコンテスト(コンテストIDの先頭3文字)
-TARGET_CONTEST = ["abc", "arc"]
+TARGET_CONTESTS = ["abc", "arc"]
 # 1年間の長さ(秒)
 ONE_YEAR_EPOCH_SECOND = 365 * 24 * 60 * 60
+# リクエスト間隔(秒)
+REQUEST_INTERVAL = 1
 # サーバと接続を確立するまでの待機時間(秒)
 CONNECT_TIMEOUT = 3.5
-# サーバがレスポンスを返すまでの待機時間
+# サーバがレスポンスを返すまでの待機時間(秒)
 READ_TIMEOUT = 3.5
 
 CLIENT = boto3.client("lambda")
@@ -61,6 +63,7 @@ def validate(event):
         }
 
 def get_request(url):
+    time.sleep(REQUEST_INTERVAL)
     res = requests.get(url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
 
     if res.status_code != 200:
@@ -77,7 +80,7 @@ def collect_contests(from_epoch_second, to_epoch_second):
     contests = json.loads(res.text)
 
     # 対象コンテストで、かつ開始時刻が[from,to]にあるコンテストを抽出
-    target_contests = list(filter(lambda c: c["id"][:3] in TARGET_CONTEST and from_epoch_second <= c["start_epoch_second"] <= to_epoch_second, contests))
+    target_contests = list(filter(lambda c: c["id"][:3] in TARGET_CONTESTS and from_epoch_second <= c["start_epoch_second"] <= to_epoch_second, contests))
 
     ret = []
     for target_contest in target_contests:
