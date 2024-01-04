@@ -1,7 +1,7 @@
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Style } from './_components/Style';
+import { Layout } from './_components/Layout';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang='ja'>
       <body className={inter.className}>
         <StyledComponentsRegistry>
-          <Style>{children}</Style>
+          <Layout>{children}</Layout>
         </StyledComponentsRegistry>
       </body>
     </html>
