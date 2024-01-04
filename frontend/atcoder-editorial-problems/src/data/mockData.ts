@@ -1,5 +1,6 @@
 import {
   categories,
+  type EditorialType,
   type Problem,
   type ProblemIndex,
   type ResultCode,
@@ -22,6 +23,11 @@ export const writersDataOptions = writersData.map((name) => ({
 
 const resulteCodes: ResultCode[] = ['AC', 'Trying', 'Yet'];
 const problemIndexs: ProblemIndex[] = ['A', 'B', 'C', 'D', 'E'];
+const editorialTypeLists: EditorialType[][] = [
+  ['official'],
+  ['user'],
+  ['official', 'user'],
+];
 export const problemsData: Problem[] = Array(50)
   .fill(null)
   .map((_, idx) => {
@@ -38,7 +44,7 @@ export const problemsData: Problem[] = Array(50)
       startEpochSecond: 111222333 + Math.floor(idx / 5),
       problemIndex: problemIndexs[idx % 5],
       resultCode: resulteCodes[idx % 3],
-      isOfficial: idx % 2 == 0,
+      editorialTypes: editorialTypeLists[idx % 3],
       isExperimental: idx % 3 == 0,
     };
     return problem;

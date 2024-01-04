@@ -46,21 +46,28 @@ def find_problems_by_writer(writer):
     return res
 
 def make_response(data):
-    # オブジェクト変換
-    def convert(row):
-        return {
-            "contest" : row["contest_id"].upper(),
-            "category" : row["contest_id"][:3].upper(),
-            "name" : row["name"],
-            "difficulty" : row["difficulty"],
-            "id" : row["id"],
-            "start_epoch_second" : row["start_epoch_second"],
-            "problem_index" : row["problem_index"],
-            "is_official" : row["is_official"],
-            "is_experimental": row["is_experimental"]
-        }
+    # 解説タイプをまとめる
+    # 一つの問題に同一筆者が公式・ユーザ解説の両方を書いている場合があるため
+    problems = {}
+    for row in data:
+        id = row["id"]
+        editorial_type = "official" if row["is_official"] else "user"
+        if id in problems:
+            problems[id]["editorial_types"].append(editorial_type)
+        else:
+            problems[id] = {
+                "id" : id,
+                "contest" : row["contest_id"].upper(),
+                "category" : row["contest_id"][:3].upper(),
+                "name" : row["name"],
+                "difficulty" : row["difficulty"],
+                "start_epoch_second" : row["start_epoch_second"],
+                "problem_index" : row["problem_index"],
+                "editorial_types" : [editorial_type],
+                "is_experimental": row["is_experimental"]
+            }
 
-    return list(map(convert, data))
+    return list(problems.values())
 
 def lambda_handler(event, context):
     # 検索処理
