@@ -35,13 +35,13 @@ export type ProblemResponse = {
   is_experimental: boolean;
 };
 
-type OmitProps =
+type NameAdjustedProps =
   | 'start_epoch_second'
   | 'result_code'
   | 'problem_index'
   | 'editorial_types'
   | 'is_experimental';
-export type Problem = Omit<ProblemResponse, OmitProps> & {
+export type Problem = Omit<ProblemResponse, NameAdjustedProps> & {
   startEpochSecond: number;
   resultCode: ResultCode;
   problemIndex: ProblemIndex;
