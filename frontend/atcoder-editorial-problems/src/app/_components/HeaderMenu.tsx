@@ -38,6 +38,14 @@ const items: MenuProps['items'] = [
         ),
         key: 'twitter',
       },
+      {
+        label: (
+          <LinkToOutside href='https://github.com/Ajinoko33/AtCoderEditorialProblems_dev'>
+            GitHub
+          </LinkToOutside>
+        ),
+        key: 'github',
+      },
     ],
   },
 ];
