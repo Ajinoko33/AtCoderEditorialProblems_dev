@@ -51,6 +51,10 @@ div.ant-typography,span.ant-typography {
   line-height: 3rem !important;
 }
 
+.ant-col-16.ant-col-offset-8.ant-form-item-control {
+  max-width: max-content !important;
+}
+
 /* Original */
 
 .table-column-sorters:hover .table-column-sorter-inactive {

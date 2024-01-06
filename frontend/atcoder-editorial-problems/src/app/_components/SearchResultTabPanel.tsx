@@ -308,7 +308,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
         className='max-w-xl'
         rowClassName={rowClassName}
         title={() => tableCustom}
-        style={{ minHeight: '100vh' }}
+        style={{ minHeight: '120vh' }}
       />
     </Flex>
   );
