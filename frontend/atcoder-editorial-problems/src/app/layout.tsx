@@ -1,4 +1,5 @@
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Layout } from './_components/Layout';
@@ -23,6 +24,7 @@ export default function RootLayout({
           <Layout>{children}</Layout>
         </StyledComponentsRegistry>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID ?? ''} />
     </html>
   );
 }
