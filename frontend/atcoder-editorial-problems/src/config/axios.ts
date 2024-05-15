@@ -1,6 +1,5 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-  // TODO:APIエンドポイントを設定
-  baseURL: 'baseURL',
+  baseURL: process.env.NEXT_PUBLIC_API_ENDPOINT,
 });
