@@ -2,6 +2,13 @@
 
 [AtCoder Editorial Problems](https://ajinoko33.github.io/AtCoderEditorialProblems/)の開発用リポジトリです。
 
+### static exportの手順
+
+1. `/frontend/atcoder-editorial-problems/next.config.js`内の`basePath`, `trailingSlash`のコメントアウトを外す．
+2. `/frontend/atcoder-editorial-problems`でbuild. `/frontend/atcoder-editorial-problems/out`に出力される．
+```bash
+npm run build
+```
 
 ### バックログ
 
