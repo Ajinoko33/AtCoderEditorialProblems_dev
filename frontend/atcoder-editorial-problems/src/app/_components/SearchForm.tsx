@@ -35,6 +35,34 @@ const validateMessages: FormProps['validateMessages'] = {
   required: "'${label}' is required!",
 };
 
+const filterOption = (
+  inputValue: string,
+  option?: {
+    value: string;
+    label: string;
+  },
+) => !!option && option.label.toLowerCase().includes(inputValue.toLowerCase());
+
+const filterSort = (
+  optionA: {
+    value: string;
+    label: string;
+  },
+  optionB: {
+    value: string;
+    label: string;
+  },
+) => {
+  const a = optionA.label;
+  const b = optionB.label;
+  const lowerCompared = a.toLowerCase().localeCompare(b.toLowerCase(), 'en');
+  if (lowerCompared === 0) {
+    return a.localeCompare(b, 'en');
+  } else {
+    return lowerCompared;
+  }
+};
+
 const createOptions = (wirters: string[]) =>
   wirters.map((writer) => ({
     value: writer,
@@ -120,11 +148,8 @@ export const SearchForm: FC<SearchFormProps> = memo(
           <Select
             showSearch
             placeholder='Search to Select'
-            filterSort={(optionA, optionB) =>
-              (optionA?.label ?? '')
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? '').toLowerCase())
-            }
+            filterOption={filterOption}
+            filterSort={filterSort}
             options={createOptions(writers)}
             suffixIcon={
               isLoadingWriters ? (
