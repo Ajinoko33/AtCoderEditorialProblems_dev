@@ -28,6 +28,9 @@ def conver_editorial(editorial):
         },
         "ContestStartEpochSecond": {
             "N": str(editorial["contest_start_epoch_second"])
+        },
+        "ProblemId": {
+            "S": editorial["problem_id"]
         }
     }
 

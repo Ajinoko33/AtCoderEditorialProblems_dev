@@ -16,7 +16,8 @@ def convert_item(item):
         "start_epoch_second" : int(item["ContestStartEpochSecond"]["N"]),
         "problem_index" : problem_index,
         "editorial_type" : editorial_type,
-        "is_experimental": item["ProblemIsExperimental"]["BOOL"]
+        "is_experimental": item["ProblemIsExperimental"]["BOOL"],
+        "problem_id": item["ProblemId"]["S"]
     }
 
     if "ProblemDifficulty" in item:
@@ -60,11 +61,11 @@ def make_response(data):
                 "start_epoch_second" : datum["start_epoch_second"],
                 "problem_index" : datum["problem_index"],
                 "editorial_types" : [datum["editorial_type"]],
-                "is_experimental": datum["is_experimental"]
+                "is_experimental": datum["is_experimental"],
+                "problem_id": datum["problem_id"]
             }
             if "difficulty" in datum:
                 problems[key]["difficulty"] = datum["difficulty"]
-
 
     return list(problems.values())
 

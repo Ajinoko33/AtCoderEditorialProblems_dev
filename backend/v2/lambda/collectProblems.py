@@ -227,7 +227,8 @@ def create_editorials(contests, problems, contests_problems, editorial_entries):
                     "problem_index": pair["problem_index"],
                     "contest_start_epoch_second": contest["start_epoch_second"],
                     "is_official": editorial_entry["is_official"],
-                    }
+                    "problem_id": pair["problem_id"]
+                }
 
                 if "difficulty" in problem:
                     editorial["problem_difficulty"] = problem["difficulty"]

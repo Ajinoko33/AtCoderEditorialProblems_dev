@@ -11,7 +11,7 @@ def check_error(res):
         print("[ERROR] Lambda Invocation Error")
         print("invocation result: ", res)
         raise RuntimeError("Lambda Invocation Error")
-    
+
     if "FunctionError" in res:
         # 関数エラー
         print("[ERROR] Function Error")
@@ -46,7 +46,7 @@ def collect_user_results(user):
     )
 
     check_error(res)
-    
+
     return json.loads(res["Payload"].read())
 
 def to_dict(source):
@@ -54,7 +54,7 @@ def to_dict(source):
     ret = {}
     for obj in source:
         ret[obj["id"]] = obj["result_code"]
-    
+
     return ret
 
 def unite_results(problems, user_results):
@@ -63,7 +63,7 @@ def unite_results(problems, user_results):
     ret = []
     for problem in problems:
         united_problem = copy.deepcopy(problem)
-        problem_id = united_problem["id"]
+        problem_id = united_problem["problem_id"]
         if problem_id in result_codes:
             united_problem["result_code"] = result_codes[problem_id]
         ret.append(united_problem)
