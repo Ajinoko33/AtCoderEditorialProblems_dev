@@ -1,0 +1,16 @@
+get:
+  tags:
+    - writers
+  summary: get all writers
+  operationId: getWriters
+  responses:
+    '200':
+      description: "OK: got all writers"
+      content:
+        application/json:
+          schema:
+            $ref: ../components/responses/writersResponse.yml
+    '4XX':
+      description: "Client Error"
+    '5XX':
+      description: "Server Error"

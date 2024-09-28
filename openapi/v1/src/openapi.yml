@@ -1,0 +1,21 @@
+openapi: 3.1.0
+info:
+  title: atcoder-editorial-problems-api
+  version: '1.0'
+  description: A definition of AtCoder Editorial Problems API.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+security:
+  - {}
+# Redoclyによりserversを指定するよう指摘されるが，指定するとorvalによる生成ができないため無視して良い
+tags:
+  - name: writers
+    description: writers of the editorials
+  - name: problems
+    description: AtCoder problems
+paths:
+  /writers:
+    $ref: paths/writers.yml
+  /problems:
+    $ref: paths/problems.yml

@@ -10,6 +10,22 @@
 npm run build
 ```
 
+### OpenAPIのバンドル
+
+[Redocly CLI](https://redocly.com/docs/cli)を使用してOpenAPIをバンドルする．
+
+1. (初回のみ)Redocly CLIをインストール．
+
+```bash
+npm i -g @redocly/cli@latest
+```
+
+2. バンドルする．`/openapi`配下の`output`ディレクトリに出力される．
+
+```bash
+redocly bundle
+```
+
 ### バックログ
 
 - 未完了

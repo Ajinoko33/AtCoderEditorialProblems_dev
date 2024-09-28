@@ -1,0 +1,8 @@
+extends:
+  - recommended-strict
+apis:
+  main@v1:
+    root: openapi/v1/src/openapi.yml
+    output: openapi/v1/output/openapi.yml
+rules:
+  no-undefined-server-variable: warn

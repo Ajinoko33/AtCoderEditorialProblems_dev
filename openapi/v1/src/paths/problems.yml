@@ -1,0 +1,27 @@
+get:
+  tags:
+    - problems
+  summary: get problems with selected writer
+  operationId: getProblems
+  parameters:
+    - name: writer
+      in: query
+      schema:
+        type: string
+      description: name of the editorial of the problem
+    - name: user
+      in: query
+      schema:
+        type: string
+      description: name of user
+  responses:
+    '200':
+      description: "OK: got problems"
+      content:
+        application/json:
+          schema:
+            $ref: ../components/responses/problemsResponse.yml
+    '4XX':
+      description: "Client Error"
+    '5XX':
+      description: "Server Error"

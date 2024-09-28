@@ -1,0 +1,48 @@
+type: object
+properties:
+  id:
+    type: string
+    description: problem id with a editorial writer
+  contest:
+    type: string
+    description: contest name
+  category:
+    type: string
+    description: contest category
+  name:
+    type: string
+    description: problem name
+  start_epoch_second:
+    type: integer
+    description: contest start time (UNIX time)
+  problem_index:
+    type: string
+    description: problem index in the contest
+  editorial_types:
+    type: array
+    description: editorial type
+    items:
+      type: string
+  is_experimental:
+    type: boolean
+    description: whether this problem is experimental
+  problem_id:
+    type: string
+    description: problem id
+  difficulty:
+    type: integer
+    description: problem difficulty
+  result_code:
+    type: string
+    description: result of user submissions
+required:
+  - id
+  - contest
+  - category
+  - name
+  - start_epoch_second
+  - problem_index
+  - editorial_types
+  - is_experimental
+  - problem_id
+  - difficulty
