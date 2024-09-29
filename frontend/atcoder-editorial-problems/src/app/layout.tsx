@@ -1,8 +1,9 @@
+import { ContextProviders, Layout } from '@/components/app';
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Layout } from './_components/Layout';
+import React from 'react';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang='ja'>
       <body className={inter.className}>
         <StyledComponentsRegistry>
-          <Layout>{children}</Layout>
+          <ContextProviders>
+            <Layout>{children}</Layout>
+          </ContextProviders>
         </StyledComponentsRegistry>
       </body>
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID ?? ''} />

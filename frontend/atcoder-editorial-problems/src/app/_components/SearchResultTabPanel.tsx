@@ -1,7 +1,8 @@
 import { ColumnTitleWithSorter, LinkToOutside } from '@/components';
 import { EditorialTypeBadge } from '@/components/EditorialTypeBadge';
+import { Problem } from '@/generated/orval/models';
 import type { ActiveSorterHandler, UpdateRangeHandler } from '@/hooks';
-import type { EditorialType, Problem, ProblemIndex, ResultCode } from '@/types';
+import type { EditorialType, ProblemIndex, ResultCode } from '@/types';
 import { Flex, Space, Table } from 'antd';
 import type { ColumnType, ColumnsType, TableProps } from 'antd/es/table';
 import type { SortOrder } from 'antd/es/table/interface';
@@ -27,7 +28,7 @@ const problemIndexOrders = {
   Ex: 81,
 };
 
-export type sortableColumn = 'ID' | 'diff';
+export type SortableColumn = 'ID' | 'diff';
 export type SearchResultTabPanelProps = {
   problems: Problem[];
   isCustomOpened: boolean;
@@ -36,9 +37,9 @@ export type SearchResultTabPanelProps = {
   handleDifficultyHiddenChange: (hidden: boolean) => void;
   difficultyRange: [number, number];
   updateDifficultyRange: UpdateRangeHandler;
-  activeSorter: sortableColumn;
+  activeSorter: SortableColumn;
   sortOrder: SortOrder;
-  activateSorter: ActiveSorterHandler<sortableColumn>;
+  activateSorter: ActiveSorterHandler<SortableColumn>;
 };
 
 const getProblemIndexOrder = (problemIndex: ProblemIndex) =>
@@ -57,6 +58,24 @@ interface DataType {
   editorialTypes: EditorialType[];
   isExperimental: boolean;
 }
+
+const convertProblemsToData = (problems: Problem[]) => {
+  return problems.map((problem, idx) => {
+    return {
+      key: idx.toString(),
+      id: problem.id,
+      contest: problem.contest,
+      name: problem.name,
+      difficulty: problem.difficulty,
+      startEpochSecond: problem.start_epoch_second,
+      resultCode: (problem.result_code || 'Yet') as ResultCode,
+      problemIndex: problem.problem_index as ProblemIndex,
+      order: idx, // ソート時に変更
+      editorialTypes: problem.editorial_types as EditorialType[],
+      isExperimental: problem.is_experimental,
+    };
+  });
+};
 
 const baseColumns: ColumnsType<DataType> = [
   {
@@ -100,7 +119,7 @@ const rowClassName: TableProps<DataType>['rowClassName'] = (record) => {
 
 const sort = (
   data: DataType[],
-  activeSorter: sortableColumn,
+  activeSorter: SortableColumn,
   sortOrder: SortOrder,
 ) => {
   let res = data;
@@ -156,12 +175,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
   activateSorter,
 }) => {
   const data: DataType[] = useMemo(
-    () =>
-      problems.map((problem, idx) => ({
-        ...problem,
-        key: idx.toString(),
-        order: idx, // ソート時に変更
-      })),
+    () => convertProblemsToData(problems),
     [problems],
   );
 

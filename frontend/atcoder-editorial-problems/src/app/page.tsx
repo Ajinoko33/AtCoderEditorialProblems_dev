@@ -1,28 +1,16 @@
 'use client';
 
-import { useTrigger } from '@/hooks';
-import type { Problem } from '@/types';
+import { useProblemSearchContext } from '@/contexts';
 import { Alert, Flex } from 'antd';
-import { useCallback, useState } from 'react';
 import { SearchForm } from './_components/SearchForm';
 import { SearchResult } from './_components/SearchResult';
 
 export default function Home() {
-  const [problems, setProblems] = useState<Problem[]>([]);
-  const [hasLoadingWritersError, setHasLoadingWritersError] =
-    useState<boolean>(false);
-  const [hasSearchingError, setHasSearchingError] = useState<boolean>(false);
-  const [retryTrigger, retry] = useTrigger();
+  const { searchConditions, writersHook, problemsHook, search } =
+    useProblemSearchContext();
 
-  const handleProblemsChange = useCallback((newProblems: Problem[]) => {
-    setProblems(newProblems);
-  }, []);
-  const handleLoadingWritersErrorChange = useCallback((occurred: boolean) => {
-    setHasLoadingWritersError(occurred);
-  }, []);
-  const handleSearchingErrorChange = useCallback((occurred: boolean) => {
-    setHasSearchingError(occurred);
-  }, []);
+  const hasLoadingWritersError = writersHook?.writersQuery.isError;
+  const hasSearchingError = problemsHook?.problemsQuery.isError;
 
   return (
     <Flex align='center' vertical>
@@ -35,7 +23,7 @@ export default function Home() {
                   Failed to load wirters.{' '}
                   <span
                     className='text-[#1677FF] cursor-pointer hover:text-[#69B1FF] transition-colors duration-300'
-                    onClick={retry}
+                    onClick={() => writersHook.writersQuery.refetch()}
                   >
                     Click here to try again.
                   </span>
@@ -57,14 +45,15 @@ export default function Home() {
 
       <div className='mt-4'>
         <SearchForm
-          handleProblemsChange={handleProblemsChange}
-          handleLoadingWritersErrorChange={handleLoadingWritersErrorChange}
-          handleSearchingErrorChange={handleSearchingErrorChange}
-          retryTrigger={retryTrigger}
+          defaultValues={searchConditions}
+          writers={writersHook?.writers}
+          isLoadingWriters={writersHook?.writersQuery.isLoading}
+          search={search}
+          isSearching={problemsHook?.problemsQuery.isFetching}
         />
       </div>
       <div className='mt-2'>
-        <SearchResult problems={problems} />
+        <SearchResult problems={problemsHook.modifiedProblems} />
       </div>
     </Flex>
   );

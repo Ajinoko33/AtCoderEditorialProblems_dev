@@ -1,3 +1,5 @@
+'use client';
+
 import { LinkToOutside } from '@/components';
 import {
   FileSearchOutlined,

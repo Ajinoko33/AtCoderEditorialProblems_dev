@@ -1,15 +1,17 @@
+import { Problem } from '@/generated/orval/models';
 import { useActiveSorter, useRange } from '@/hooks';
-import { categories, type Problem } from '@/types';
+import { categories } from '@/types';
 import { Tabs, type TabsProps } from 'antd';
 import { memo, useCallback, useState, type FC } from 'react';
-import { SearchResultTabPanel, sortableColumn } from './SearchResultTabPanel';
+import { SearchResultTabPanel, SortableColumn } from './SearchResultTabPanel';
 import { MAX_DIFFICULTY_RANGE, MIN_DIFFICULTY_RANGE } from './TableCustom';
 
 export type SearchResultProps = {
   problems: Problem[];
 };
 
-export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
+export const SearchResult: FC<SearchResultProps> = memo((props) => {
+  const { problems } = props;
   const [isCustomOpened, setIsCustomOpened] = useState<boolean>(false);
   const [isDifficultyHidden, setIsDifficultyHidden] = useState<boolean>(false);
   const [difficultyRange, updateDifficultyRange] = useRange([
@@ -17,7 +19,7 @@ export const SearchResult: FC<SearchResultProps> = memo(({ problems }) => {
     MAX_DIFFICULTY_RANGE,
   ]);
   const [activeSorter, sortOrder, activateSorter] =
-    useActiveSorter<sortableColumn>('ID', 'descend');
+    useActiveSorter<SortableColumn>('ID', 'descend');
 
   const handleCustomOpenedChange = useCallback((opened: boolean) => {
     setIsCustomOpened(opened);
