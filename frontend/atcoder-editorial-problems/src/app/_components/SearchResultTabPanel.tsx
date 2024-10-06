@@ -57,6 +57,7 @@ interface DataType {
   order: number;
   editorialTypes: EditorialType[];
   isExperimental: boolean;
+  problemId: string;
 }
 
 const convertProblemsToData = (problems: Problem[]) => {
@@ -73,6 +74,7 @@ const convertProblemsToData = (problems: Problem[]) => {
       order: idx, // ソート時に変更
       editorialTypes: problem.editorial_types as EditorialType[],
       isExperimental: problem.is_experimental,
+      problemId: problem.problem_id,
     };
   });
 };
@@ -215,7 +217,7 @@ export const SearchResultTabPanel: FC<SearchResultTabPanelProps> = ({
                   )}
                   <span className='mr-4'>
                     <LinkToOutside
-                      href={`https://atcoder.jp/contests/${record.contest}/tasks/${record.id}`}
+                      href={`https://atcoder.jp/contests/${record.contest}/tasks/${record.problemId}`}
                       iconSize='none'
                     >
                       {text}
